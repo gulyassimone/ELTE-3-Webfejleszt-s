@@ -1,38 +1,48 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
+    <link rel="stylesheet" href="default.css">
     <meta charset="UTF-8">
     <title>SET Játék</title>
 </head>
 <body>
 <div id="nyitolap">
     <b>SET játék</b><br>
-    Játék szabályzat
-    <div id="jatekszabalyok">
-        A játék célja hogy 3 kártyából álló SET-eket találjunk meg az asztalra lehelyezett 12 kártyából. Minden
-        kártyának 4 tulajdonsága van, amik a következők:
-        <ul>
-            <li>FORMA: ovális, hullámos, rombusz</li>
-            <li>SZÍN: piros, zöld, lila</li>
-            <li>SZÁM: 1, 2 vagy 3 forma</li>
-            <li>TARTALOM: tömör, csíkos, üres (ez csak a plusz feladatokban jelenik meg.)</li>
-        </ul>
-        Egy SET 3 kártyából áll, amiben minden jellemzőt külön megvizsgálva, azoknak
-        <ul>
-            <li>vagy minden kártyán azonosnak,</li>
-            <li> vagy minden kártyán különbözőnek kell lennie.</li>
-        </ul>
-        Ennek a szabálynak MINDEN tulajdonság esetében meg kell felelnie a kiválasztott három lapnak. Más szavakkal: a
-        forma vagy azononos mindhárom kártyán, vagy mindegyiken más; a szín vagy azonos mindhárom kártyán, vagy
-        mindegyiken különböző, stb... Fordítva: ha a lapokon egy tulajdonságot vizsgálva 2 azonos és 1 különböző típus
-        látható, akkor az nem SET. Például, ha 2 lap piros, 1 pedig lila, akkor az nem SET.
+    <button id="mutat_jatekszabaly">Játék szabályzat</button>
+    <div id="jatekszabalyok" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>A játék célja hogy 3 kártyából álló SET-eket találjunk meg az asztalra lehelyezett 12 kártyából. Minden
+                kártyának 4 tulajdonsága van, amik a következők:
+            <ul>
+                <li>FORMA: ovális, hullámos, rombusz</li>
+                <li>SZÍN: piros, zöld, lila</li>
+                <li>SZÁM: 1, 2 vagy 3 forma</li>
+                <li>TARTALOM: tömör, csíkos, üres (ez csak a plusz feladatokban jelenik meg.)</li>
+            </ul>
+            </p>
+            <p>Egy SET 3 kártyából áll, amiben minden jellemzőt külön megvizsgálva, azoknak
+            <ul>
+                <li>vagy minden kártyán azonosnak,</li>
+                <li> vagy minden kártyán különbözőnek kell lennie.</li>
+            </ul>
+            </p>
+            <p>
+                Ennek a szabálynak MINDEN tulajdonság esetében meg kell felelnie a kiválasztott három lapnak. Más
+                szavakkal: a
+                forma vagy azononos mindhárom kártyán, vagy mindegyiken más; a szín vagy azonos mindhárom kártyán, vagy
+                mindegyiken különböző, stb... Fordítva: ha a lapokon egy tulajdonságot vizsgálva 2 azonos és 1 különböző
+                típus
+                látható, akkor az nem SET. Például, ha 2 lap piros, 1 pedig lila, akkor az nem SET.
+            </p>
+        </div>
     </div>
     <div id="beallitasok">
         Játékosok száma:
-        <input type="number" id="jatekosok_szama" min="1" max="10"><br>
+        <input type="number" id="jatekosok_szama" min="1" max="10" value="1"><br>
         Játék mód
-        <select name="jatek_mod" id="Játék mód">
-            <option value="gyakorló">Gyakorló</option>
+        <select name="jatek_mod" id="jatek_mod">
+            <option value="gyakorlo">Gyakorló</option>
             <option value="verseny">Verseny</option>
         </select>
         <div id="egyeb">
@@ -42,19 +52,24 @@
             SET mutatása gomb
             <input type="checkbox" id="set_mutatas" name="set_mutatas" value="SET mutatása gomb"><br>
             Plusz 3 lap automatikus kiosztás
-            <input type="checkbox" id="plusz_3_lap" name="plusz_3_lap" value="Plusz 3 lap automatikus kiosztása" checked><br>
+            <input type="checkbox" id="plusz_3_lap" name="plusz_3_lap" value="Plusz 3 lap automatikus kiosztása"
+                   checked><br>
         </div>
     </div>
+    <button id="inditas" type="button">Indítas</button>
 </div>
-<div id="jatek">
-    <button id="van_benne_set_gomb" type="button">Van benne SET?</button>
-    <button id="set_mutatas_gomb" type="button">SET mutatása</button>
-    <button id="plusz_lapok_gomb" type="button">Plusz 3 lap automatikus kiosztása</button>
-    <div id = "van_benne_ser_valasz"></div><br>
-    <div id = "set_vizsgalat"></div>
-    <dix id = "jatekosok"></dix>
-    <dix id = "eredmeny"></dix>
-    <div id = "jatek_tabla"></div>
+<div id="jatek" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;
+        <button id="van_benne_set_gomb" type="button">Van benne SET?</button>
+        <button id="set_mutatas_gomb" type="button">SET mutatása</button>
+        <button id="plusz_lapok_gomb" type="button">Plusz 3 lap automatikus kiosztása</button>
+        <div id="van_benne_ser_valasz"></div>
+        <div id="set_vizsgalat"></div>
+        <dix id="jatekosok"></dix>
+        <dix id="eredmeny"></dix>
+        <div id="jatek_tabla"></div>
+    </div>
 </div>
 <script src="main.js"></script>
 </body>
