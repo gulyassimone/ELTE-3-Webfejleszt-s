@@ -6,10 +6,10 @@
     <title>SET Játék</title>
 </head>
 <body>
-<div id="nyitolap">
+<div id="menu">
     <b>SET játék</b><br>
-    <button id="mutat_jatekszabaly">Játék szabályzat</button>
-    <div id="jatekszabalyok" class="modal">
+    <button id="show_rules">Játék szabályzat</button>
+    <div id="rules" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
             <p>A játék célja hogy 3 kártyából álló SET-eket találjunk meg az asztalra lehelyezett 12 kártyából. Minden
@@ -37,38 +37,37 @@
             </p>
         </div>
     </div>
-    <div id="beallitasok">
+    <div id="general_options">
         Játékosok száma:
-        <input type="number" id="jatekosok_szama" min="1" max="10" value="1"><br>
+        <input type="number" id="players_number" min="1" max="10" value="1"><br>
         Játék mód
-        <select name="jatek_mod" id="jatek_mod">
-            <option value="gyakorlo">Gyakorló</option>
-            <option value="verseny">Verseny</option>
+        <select name="game_mod" id="game_mod">
+            <option value="practice">Gyakorló</option>
+            <option value="competitive">Verseny</option>
         </select>
-        <div id="egyeb">
+        <div id="special_options">
             <b>Egyéb beállítások</b><br>
             Van benne SET? gomb
-            <input type="checkbox" id="van_e_set" name="van_e_set" value="Van benne SET? gomb"><br>
+            <input type="checkbox" id="exist_set_checkbox" name="exist_set_checkbox" value="Van benne SET? gomb"><br>
             SET mutatása gomb
-            <input type="checkbox" id="set_mutatas" name="set_mutatas" value="SET mutatása gomb"><br>
+            <input type="checkbox" id="find_set_checkbox" name="find_set_checkout" value="SET mutatása gomb"><br>
             Plusz 3 lap automatikus kiosztás
-            <input type="checkbox" id="plusz_3_lap" name="plusz_3_lap" value="Plusz 3 lap automatikus kiosztása"
+            <input type="checkbox" id="add_cards_checkbox" name="add_cards_checkbox" value="Plusz 3 lap automatikus kiosztása"
                    checked><br>
         </div>
     </div>
-    <button id="inditas" type="button">Indítas</button>
+    <button id="play" type="button">Indítas</button>
 </div>
-<div id="jatek" class="modal">
+<div id="game" class="modal">
     <div class="modal-content">
         <span class="close">&times;
-        <button id="van_benne_set_gomb" type="button">Van benne SET?</button>
-        <button id="set_mutatas_gomb" type="button">SET mutatása</button>
-        <button id="plusz_lapok_gomb" type="button">Plusz 3 lap automatikus kiosztása</button>
-        <div id="van_benne_ser_valasz"></div>
-        <div id="set_vizsgalat"></div>
-        <dix id="jatekosok"></dix>
-        <dix id="eredmeny"></dix>
-        <div id="jatek_tabla"></div>
+        <button id="exist_set_button" type="button">Van benne SET?</button>
+        <button id="find_set_button" type="button">SET mutatása</button>
+        <button id="add_cards_button" type="button">Plusz 3 lap automatikus kiosztása</button>
+        <div id="exist_set_answer"></div>
+        <dix id="players"></dix>
+        <dix id="score"></dix>
+        <div id="table"></div>
     </div>
 </div>
 <script src="main.js"></script>
