@@ -22,6 +22,7 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
+  <component name="PhpDebugGeneral" listening_started="true" />
   <component name="ProjectId" id="1kFR93OkqnSLI2xoidYzGqlXFAE" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
@@ -53,10 +54,17 @@
       <workItem from="1605294198169" duration="4106000" />
       <workItem from="1605352742565" duration="5500000" />
       <workItem from="1605447843204" duration="2531000" />
+      <workItem from="1605617630088" duration="11186000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="1085" y="456" key="#com.intellij.ide.util.MemberChooser" timestamp="1605620596452">
+      <screen x="0" y="40" width="2560" height="1400" />
+    </state>
+    <state x="1085" y="456" key="#com.intellij.ide.util.MemberChooser/0.40.2560.1400/-1920.6.1920.1040@0.40.2560.1400" timestamp="1605620596452" />
   </component>
 </project>

@@ -39,3 +39,6 @@
     text-decoration: none;
     cursor: pointer;
 }
+.deck img{
+    height: 15em;
+}
