@@ -9,30 +9,32 @@ const existSetCheckbox = document.querySelector("#exist_set_checkbox");
 const findSetCheckbox = document.querySelector("#find_set_checkbox");
 const addCardsCheckbox = document.querySelector("#add_cards_checkbox");
 const play = document.querySelector("#play");
-const tableContainer = document.querySelector('#table-container')
+const tableContainer = document.querySelector('#table-container');
+const playersContainer = document.querySelector('#players');
+
 
 const shapes = {
-        DIAMOND: {magyar:"rombusz" ,english:"diamond" ,code:'D' },
-        OVAL: {magyar:"ovális" ,english:"oval" ,code:'P' },
-        SQUIGGLE: {magyar:"hullámos" ,english:"squiggle" ,code:'S' }
-    };
+    DIAMOND: {magyar: "rombusz", english: "diamond", code: 'D'},
+    OVAL: {magyar: "ovális", english: "oval", code: 'P'},
+    SQUIGGLE: {magyar: "hullámos", english: "squiggle", code: 'S'}
+};
 
-const colors ={
-    GREEN: {magyar:"zöld" ,english:"green" ,code:'g' },
-    PURPLE: {magyar:"lila" ,english:"purple" ,code:'p' },
-    RED: {magyar:"piros" ,english:"red" ,code:'r' }
+const colors = {
+    GREEN: {magyar: "zöld", english: "green", code: 'g'},
+    PURPLE: {magyar: "lila", english: "purple", code: 'p'},
+    RED: {magyar: "piros", english: "red", code: 'r'}
 }
-const fills ={
-    SOLID: {magyar:"teli" ,english:"solid" ,code:"S", },
-    STRIPPED: {magyar:"csíkos" ,english:"stripped" ,code:"H" },
-    OPEN: {magyar:"üres" ,english:"open" ,code:"O" }
+const fills = {
+    SOLID: {magyar: "teli", english: "solid", code: "S",},
+    STRIPPED: {magyar: "csíkos", english: "stripped", code: "H"},
+    OPEN: {magyar: "üres", english: "open", code: "O"}
 }
 
-class players {
-    constructor(name, point, status) {
+class Player {
+    constructor(name) {
         this._name = name;
-        this._point = point;
-        this._status = status;
+        this._point = 0;
+        this._status = 0;
     }
 
     get name() {
@@ -54,6 +56,12 @@ class players {
     pointDecreasing() {
         this._point = point + 1;
     }
+    selectPlayers(){
+        this._status = 1;
+    }
+    unSelectPlayers(){
+        this._status = 0;
+    }
 }
 
 class Card {
@@ -65,6 +73,7 @@ class Card {
         this._fill = fill;
         this._id = id;
     }
+
     get shape() {
         return this._shape;
     }
@@ -88,6 +97,7 @@ class Card {
     get selected() {
         return this._selected;
     }
+
     writeToConsole() {
         console.log(`id = ${this._id} number = ${this._number} form = ${this._shape} color = ${this._color} fill = ${this._fill} selected = ${this._selected}`);
     }
@@ -114,33 +124,33 @@ const deck = {
         const m = 4;
 
         this.generateDeck();
-
+        this.shuffle();
         this.createTable();
     },
     createTable: function () {
+        let sum = 0;
         this.deck.forEach(element => element.writeToConsole());
         let table = document.createElement('table');
-        for(let i=0; i<4; i++){
+        for (let i = 0; i < 3; i++) {
             const row = document.createElement('tr');
-            for(let j=0; j<3; j++){
+            for (let j = 0; j < 4; j++) {
                 const cell = document.createElement('td');
-                console.log("deck" + this.deck[i+j])
-                cell.innerHTML = '<div class="deck"><img src=./icons/1HgD.svg alt="some file"/></div>';
+                cell.innerHTML = `<div class="card"><img src=./icons/${this.deck[sum].id}.svg alt="some file"/></div>`;
                 row.appendChild(cell);
+                ++sum;
             }
             table.appendChild(row);
         }
+        tableContainer.appendChild(table);
     },
 
     generateDeck: function () {
-        let deck
 
-        for(let i=1; i<5; ++i){
-            console.log();
-            for(const shape in shapes){
-                for(const color in colors){
-                    for(const fill in fills){
-                        const card = new Card(shape,color,i,fill,`${i}${fills[fill].code}${colors[color].code}${shapes[shape].code}`);
+        for (let i = 1; i < 4; ++i) {
+            for (const shape in shapes) {
+                for (const color in colors) {
+                    for (const fill in fills) {
+                        const card = new Card(shape, color, i, fill, `${i}${fills[fill].code}${colors[color].code}${shapes[shape].code}`);
                         this.deck.push(card);
                     }
                 }
@@ -157,16 +167,64 @@ const deck = {
             this.deck[i] = this.deck[j];
             this.deck[j] = temp;
         }
+    },
+    reset:function() {
+        this.deck = [];
+        tableContainer.innerHTML = "";
     }
     //   drop() {
     //   }
 }
 
 const game = {
-
+    players: [],
     init: function () {
         deck.init();
+        this.createPlayers();
+        this.writePlayers();
     },
+    createPlayers:function(){
+        for(let i=1; i<= playersNumber.value; ++i){
+            this.players.push(new Player(`Player${i}`));
+            console.log(`Player${i}`);
+        }
+    },
+    writePlayers:function(){
+        const table =  document.createElement('table');
+        const playerColumnNameHead = document.createElement('th');
+        const playerColumnPointHead =  document.createElement('th');
+        const playerHeadRow = document.createElement('tr');
+
+        playerColumnNameHead.innerHTML = 'Név';
+        playerColumnPointHead.innerHTML = 'Pont'
+
+        playerHeadRow.appendChild(playerColumnNameHead)
+        playerHeadRow.appendChild(playerColumnPointHead);
+
+        table.appendChild(playerHeadRow);
+
+        for(let i=0; i< playersNumber.value; ++i){
+            if(this.players[i].status == 0) {
+                console.log(i);
+                const playerLine = document.createElement('tr');
+                const playerColumnName = document.createElement('td');
+                const playerColumnPoint = document.createElement('td');
+
+                playerColumnName.innerHTML = this.players[i].name;
+                playerColumnPoint.innerHTML = this.players[i].point;
+
+                playerLine.appendChild(playerColumnName);
+                playerLine.appendChild(playerColumnPoint);
+                table.appendChild(playerLine)
+            }
+        }
+        playersContainer.appendChild(table);
+    },
+    reset: function(){
+        this.players = [];
+        deck.reset();
+        playersContainer.innerHTML = "";
+    }
 }
 
 showRules.addEventListener("click", function (event) {
@@ -183,6 +241,7 @@ rules.addEventListener("click", function (event) {
 document.addEventListener("click", function (event) {
     if (event.target.matches(".close")) {
         event.target.closest(".modal").style.display = "none";
+        game.reset();
     }
 });
 

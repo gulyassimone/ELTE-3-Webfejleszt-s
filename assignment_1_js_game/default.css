@@ -23,6 +23,8 @@
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
+    max-height: calc(100vh - 210px);
+    overflow-y: auto;
 }
 
 /* The Close Button */
@@ -39,6 +41,6 @@
     text-decoration: none;
     cursor: pointer;
 }
-.deck img{
-    height: 15em;
+.card img{
+    height: 10em;
 }

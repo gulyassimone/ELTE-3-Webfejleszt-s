@@ -12,10 +12,10 @@ A fegyelmi vétség legsúlyosabb következménye a hallgató elbocsátása az e
 
 Minimálisan teljesítendő (6 pont)
 
-- [ ] A "További elvárások" részben szereplő `README.md` fájl megfelelően kitöltve szerepel a feltöltött csomagban (0 pont)
-- [ ] A játékoldal megjelenik. (0 pont)
-- [ ] 3 tulajdonság ismétléses variációjából összeáll a 27 kártyából álló pakli összekeverve, a konzolra kiíródik. (1 pont)
-- [ ] Megjelenik a 3x4-es leosztás az első 12 lapból. (1 pont)
+- [x] A "További elvárások" részben szereplő `README.md` fájl megfelelően kitöltve szerepel a feltöltött csomagban (0 pont)
+- [x] A játékoldal megjelenik. (0 pont)
+- [x] 3 tulajdonság ismétléses variációjából összeáll a 27 kártyából álló pakli összekeverve, a konzolra kiíródik. (1 pont)
+- [x] Megjelenik a 3x4-es leosztás az első 12 lapból. (1 pont)
 - [ ] 3 kártya kijelölhető. (1 pont)
 - [ ] 3 kártya kijelölése után a program eldönti és jelzi, hogy helyes vagy helytelen SET-e. (1 pont)
 - [ ] Helyes SET esetén a 3 kártya levételre kerül és újabb 3 kártyával pótlódik. (1 pont)
