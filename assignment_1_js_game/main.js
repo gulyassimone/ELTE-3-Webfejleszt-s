@@ -1,6 +1,5 @@
-
-const menu = document.querySelector("#menu");
-const game = document.querySelector("#game");
+const menuDiv = document.querySelector("#menu");
+const gameDiv = document.querySelector("#game");
 const playersNumber = document.querySelector("#players_number");
 const gameMode = document.querySelector("#game_mod");
 const specialOptions = document.querySelector("#special_options");
@@ -10,6 +9,7 @@ const existSetCheckbox = document.querySelector("#exist_set_checkbox");
 const findSetCheckbox = document.querySelector("#find_set_checkbox");
 const addCardsCheckbox = document.querySelector("#add_cards_checkbox");
 const play = document.querySelector("#play");
+const tableContainer = document.querySelector('#table-container')
 
 class players {
     constructor(name, point, status) {
@@ -17,97 +17,138 @@ class players {
         this.point = point;
         this.status = status;
     }
-    pontCsokkentes(){
+
+    pointIncreasing() {
         this.point = point - 1;
     }
-    pontNoveles(){
+
+    pointDecreasing() {
         this.point = point + 1;
     }
 }
 
-class kartya {
-    constructor(forma, szin, szam, tartalom, id, hely) {
-        this.forma = forma;
-        this.szin = szin;
-        this.szam = szam;
-        this.tartalom = tartalom;
+class Card {
+    constructor(form, color, number, fill, id, index) {
+        this.form = form;
+        this.color = color;
+        this.number = number;
+        this.fill = fill;
         this.id = id;
-        this.hely = hely;
-        this.kivalasztas = 0;
+        this.index = index;
+        this.selected = 0;
     }
-    kartyaKivalasztas(){
-        this.kivalasztas = 1;
+
+    select() {
+        this.selected = 1;
     }
-    kartyaVisszatetel(){
-        this.kivalasztas = 0;
+
+    back() {
+        this.selected = 0;
     }
-    kartyaEldobas(){
-        this.kivalasztas = -1;
+
+    drop() {
+        this.selected = -1;
     }
 }
-class kartyaPakli {
+
+class Deck {
     constructor(number) {
-        this.pakli = pakli;
+        this.pack = pack;
     }
-    keveres(){
+
+    deal() {
 
     }
-    kartyaEldobas(){
+
+    suffle() {
+
+    }
+
+    drop() {
 
     }
 }
 
-showRules.addEventListener("click", function(event){
+const game = {
+    matrix: [],
+    table: 0,
+
+    init: function () {
+        const n = 3;
+        const m = 4;
+
+        this.matrix = this.generateMatrix(n, m);
+        console.log(this.matrix);
+
+        this.createTable(this.matrix);
+    },
+    createTable: function (data) {
+        let table = document.createElement('table');
+        data.forEach(function (rows) {
+            const row = document.createElement('tr');
+            rows.forEach(function (cells) {
+                const cell = document.createElement('td');
+                cell.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" /></svg>';
+                row.appendChild(cell);
+            });
+            table.appendChild(row);
+        });
+        tableContainer.appendChild(table);
+    },
+
+    generateMatrix: function (n, m) {
+        const matrix = []
+        for (let i = 0; i < n; i++) {
+            const row = []
+            for (let j = 0; j < m; j++) {
+                row.push(0)
+            }
+            matrix.push(row)
+        }
+        return matrix
+    }
+}
+
+showRules.addEventListener("click", function (event) {
     rules.style.display = "block";
 });
-window.addEventListener("click",function(event) {
+window.addEventListener("click", function (event) {
     if (event.target == rules) {
         rules.style.display = "none";
     }
 });
-rules.addEventListener("click",function(event) {
+rules.addEventListener("click", function (event) {
     rules.style.display = "none";
 });
-document.addEventListener("click", function(event){
-    if(event.target.matches(".close")){
+document.addEventListener("click", function (event) {
+    if (event.target.matches(".close")) {
         event.target.closest(".modal").style.display = "none";
     }
 });
 
-playersNumber.addEventListener("keypress", function (event){
-     event.preventDefault();
+playersNumber.addEventListener("keypress", function (event) {
+    event.preventDefault();
 });
 
 gameMode.addEventListener("change", function (event) {
-    if(event.target.value == "verseny"){
+    if (event.target.value == "competitive") {
         specialOptions.classList.add("hide");
         existSetCheckbox.checked = false;
         findSetCheckbox.checked = false;
         addCardsCheckbox.checked = true;
     }
-    if(event.target.value == "gyakorlo"){
+    if (event.target.value == "practice") {
         specialOptions.classList.remove("hide");
     }
 });
 
-play.addEventListener("click", function (event){
-    game.style.display = "block";
-    let ujJatek = new game(27);
+play.addEventListener("click", function (event) {
+    gameDiv.style.display = "block";
+    game.init();
 })
 
-function start() {
-    this.deck = Deck.reset()
-    this.deal()
-}
 
-const table = document.querySelector('table')
-table.addEventListener('click', onClick)
-function onClick(e) {
-    const card = e.target.closest('.card')
-    if (this.contains(card)) {
-        card.classList.toggle('flipped')
-    }
-}
+
 /*
 function delegate(parent, type, selector, handler){
     parent.addEventListener(type, function(event){
