@@ -41,11 +41,15 @@
     text-decoration: none;
     cursor: pointer;
 }
-.card img{
+img{
     height: 10em;
 }
 .selectPlayer {
     font-weight: bold;
     font-size: 150%;
     color: green;
+}
+.selectCard{
+    height: 15em;
+    border: 5px solid yellow;
 }

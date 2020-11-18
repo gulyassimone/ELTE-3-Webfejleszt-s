@@ -15,10 +15,6 @@ const existSetButton = document.querySelector("#exist_set_button");
 const findSetButton = document.querySelector("#find_set_button");
 const addCardsButton = document.querySelector("#add_cards_button");
 
-const selectedPlayer = "";
-const selectedCard = null;
-
-
 const shapes = {
     DIAMOND: {magyar: "rombusz", english: "diamond", code: 'D'},
     OVAL: {magyar: "ovális", english: "oval", code: 'P'},
@@ -29,12 +25,13 @@ const colors = {
     GREEN: {magyar: "zöld", english: "green", code: 'g'},
     PURPLE: {magyar: "lila", english: "purple", code: 'p'},
     RED: {magyar: "piros", english: "red", code: 'r'}
-}
+};
+
 const fills = {
     SOLID: {magyar: "teli", english: "solid", code: "S",},
     STRIPPED: {magyar: "csíkos", english: "stripped", code: "H"},
     OPEN: {magyar: "üres", english: "open", code: "O"}
-}
+};
 
 class Player {
     constructor(name) {
@@ -58,6 +55,7 @@ class Player {
     setSelected() {
         this._selected = 1;
     }
+
     unselect() {
         this._selected = 0;
     }
@@ -69,7 +67,7 @@ class Player {
     pointDecreasing() {
         this._point = point + 1;
     }
-}
+};
 
 class Card {
     constructor(shape, color, number, fill, id) {
@@ -120,18 +118,11 @@ class Card {
     drop() {
         this._selected = -1;
     }
-}
+};
 
 const deck = {
     deck: [],
-    existSelected: 0,
-
-    setExistSelect: function(){
-        this.existSelected = 1;
-    },
-    notExistSelect: function(){
-        this.existSelected = 0;
-    },
+    existSelected: {number : 0, cards: []},
     init: function () {
         const n = 3;
         const m = 4;
@@ -151,6 +142,7 @@ const deck = {
                 cell.innerHTML = `<div class="card"><img src=./icons/${this.deck[sum].id}.svg alt="some file"/></div>`;
                 row.appendChild(cell);
                 ++sum;
+                cell.addEventListener("click", selectCardHandle)
             }
             table.appendChild(row);
         }
@@ -170,9 +162,6 @@ const deck = {
             }
         }
     },
-
-//    deal() {
-//    }
     shuffle: function () {
         for (let i = this.deck.length - 1; i > 0; i--) {
             let j = Math.floor(Math.random() * i);
@@ -185,19 +174,19 @@ const deck = {
         this.deck = [];
         tableContainer.innerHTML = "";
     }
-    //   drop() {
-    //   }
-}
+};
 
 const game = {
     players: [],
-    existSelected: 0,
+    existSelected: {number: 0, player: null},
 
-    setExistSelect: function(){
-        this.existSelected = 1;
+    setExistSelect: function (player) {
+        this.existSelected.number = 1;
+        this.existSelected.player = player;
     },
-    notExistSelect: function(){
-        this.existSelected = 0;
+    notExistSelect: function () {
+        this.existSelected.number = 0;
+        this.existSelected.player = [];
     },
     init: function () {
         deck.init();
@@ -208,7 +197,6 @@ const game = {
     createPlayers: function () {
         for (let i = 1; i <= playersNumber.value; ++i) {
             this.players.push(new Player(`Player${i}`));
-            console.log(`Player${i}`);
         }
     },
     writePlayers: function () {
@@ -245,7 +233,7 @@ const game = {
         deck.reset();
         playersContainer.innerHTML = "";
     }
-}
+};
 
 showRules.addEventListener("click", function (event) {
     rules.style.display = "block";
@@ -290,25 +278,28 @@ gameMode.addEventListener("change", function (event) {
 play.addEventListener("click", function (event) {
     gameDiv.style.display = "block";
     game.init();
-})
+});
+
 delegate(playersContainer, "click", 'tr', function (event) {
     const activePlayer = event.target;
     let player = game.players.find(element => element.name == activePlayer.innerText);
 
-    console.log("jelenlegi" + game.existSelected);
-    if(!game.existSelected){
+    if (!game.existSelected.number) {
         player.setSelected();
-        game.setExistSelect();
-        activePlayer.classList.add("selectPlayer");
-    }
-    else if(player.selected){
+        game.setExistSelect(player);
+        activePlayer.classList.add("selectPlayer")
+        console.log(game.existSelected.player)
+    } else if (player.selected) {
         player.unselect();
         game.notExistSelect();
         activePlayer.classList.remove("selectPlayer");
+        console.log(game.existSelected.player)
     }
-    console.log(player.selected);
 });
 
+function selectCardHandle(event){
+    event.target.classList.toggle("selectCard");
+};
 
 function delegate(parent, type, selector, handler) {
     parent.addEventListener(type, function (event) {
@@ -317,5 +308,6 @@ function delegate(parent, type, selector, handler) {
             handler.call(targetElement, event);
         }
     })
-}
+};
+
 
