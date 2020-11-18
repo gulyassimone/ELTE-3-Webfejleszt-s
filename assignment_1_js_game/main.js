@@ -11,6 +11,12 @@ const addCardsCheckbox = document.querySelector("#add_cards_checkbox");
 const play = document.querySelector("#play");
 const tableContainer = document.querySelector('#table-container');
 const playersContainer = document.querySelector('#players');
+const existSetButton = document.querySelector("#exist_set_button");
+const findSetButton = document.querySelector("#find_set_button");
+const addCardsButton = document.querySelector("#add_cards_button");
+
+const selectedPlayer = "";
+const selectedCard = null;
 
 
 const shapes = {
@@ -34,7 +40,7 @@ class Player {
     constructor(name) {
         this._name = name;
         this._point = 0;
-        this._status = 0;
+        this._selected = 0;
     }
 
     get name() {
@@ -45,8 +51,15 @@ class Player {
         return this._point;
     }
 
-    get status() {
-        return this._status;
+    get selected() {
+        return this._selected;
+    }
+
+    setSelected() {
+        this._selected = 1;
+    }
+    unselect() {
+        this._selected = 0;
     }
 
     pointIncreasing() {
@@ -55,12 +68,6 @@ class Player {
 
     pointDecreasing() {
         this._point = point + 1;
-    }
-    selectPlayers(){
-        this._status = 1;
-    }
-    unSelectPlayers(){
-        this._status = 0;
     }
 }
 
@@ -117,8 +124,14 @@ class Card {
 
 const deck = {
     deck: [],
+    existSelected: 0,
 
-
+    setExistSelect: function(){
+        this.existSelected = 1;
+    },
+    notExistSelect: function(){
+        this.existSelected = 0;
+    },
     init: function () {
         const n = 3;
         const m = 4;
@@ -168,7 +181,7 @@ const deck = {
             this.deck[j] = temp;
         }
     },
-    reset:function() {
+    reset: function () {
         this.deck = [];
         tableContainer.innerHTML = "";
     }
@@ -178,21 +191,30 @@ const deck = {
 
 const game = {
     players: [],
+    existSelected: 0,
+
+    setExistSelect: function(){
+        this.existSelected = 1;
+    },
+    notExistSelect: function(){
+        this.existSelected = 0;
+    },
     init: function () {
         deck.init();
         this.createPlayers();
         this.writePlayers();
     },
-    createPlayers:function(){
-        for(let i=1; i<= playersNumber.value; ++i){
+
+    createPlayers: function () {
+        for (let i = 1; i <= playersNumber.value; ++i) {
             this.players.push(new Player(`Player${i}`));
             console.log(`Player${i}`);
         }
     },
-    writePlayers:function(){
-        const table =  document.createElement('table');
+    writePlayers: function () {
+        const table = document.createElement('table');
         const playerColumnNameHead = document.createElement('th');
-        const playerColumnPointHead =  document.createElement('th');
+        const playerColumnPointHead = document.createElement('th');
         const playerHeadRow = document.createElement('tr');
 
         playerColumnNameHead.innerHTML = 'Név';
@@ -203,24 +225,22 @@ const game = {
 
         table.appendChild(playerHeadRow);
 
-        for(let i=0; i< playersNumber.value; ++i){
-            if(this.players[i].status == 0) {
-                console.log(i);
-                const playerLine = document.createElement('tr');
-                const playerColumnName = document.createElement('td');
-                const playerColumnPoint = document.createElement('td');
+        for (let i = 0; i < playersNumber.value; ++i) {
+            const playerLine = document.createElement('tr');
+            const playerColumnName = document.createElement('td');
+            const playerColumnPoint = document.createElement('td');
 
-                playerColumnName.innerHTML = this.players[i].name;
-                playerColumnPoint.innerHTML = this.players[i].point;
+            playerColumnName.innerHTML = this.players[i].name;
+            playerColumnPoint.innerHTML = this.players[i].point;
 
-                playerLine.appendChild(playerColumnName);
-                playerLine.appendChild(playerColumnPoint);
-                table.appendChild(playerLine)
-            }
+            playerLine.appendChild(playerColumnName);
+            playerLine.appendChild(playerColumnPoint);
+            table.appendChild(playerLine)
         }
         playersContainer.appendChild(table);
     },
-    reset: function(){
+
+    reset: function () {
         this.players = [];
         deck.reset();
         playersContainer.innerHTML = "";
@@ -252,12 +272,18 @@ playersNumber.addEventListener("keypress", function (event) {
 gameMode.addEventListener("change", function (event) {
     if (event.target.value == "competitive") {
         specialOptions.classList.add("hide");
+        existSetButton.classList.add("hide");
+        findSetButton.classList.add("hide");
+        addCardsButton.classList.add("hide");
         existSetCheckbox.checked = false;
         findSetCheckbox.checked = false;
         addCardsCheckbox.checked = true;
     }
     if (event.target.value == "practice") {
         specialOptions.classList.remove("hide");
+        existSetButton.classList.remove("hide");
+        findSetButton.classList.remove("hide");
+        addCardsButton.classList.remove("hide");
     }
 });
 
@@ -265,15 +291,31 @@ play.addEventListener("click", function (event) {
     gameDiv.style.display = "block";
     game.init();
 })
+delegate(playersContainer, "click", 'tr', function (event) {
+    const activePlayer = event.target;
+    let player = game.players.find(element => element.name == activePlayer.innerText);
+
+    console.log("jelenlegi" + game.existSelected);
+    if(!game.existSelected){
+        player.setSelected();
+        game.setExistSelect();
+        activePlayer.classList.add("selectPlayer");
+    }
+    else if(player.selected){
+        player.unselect();
+        game.notExistSelect();
+        activePlayer.classList.remove("selectPlayer");
+    }
+    console.log(player.selected);
+});
 
 
-/*
-function delegate(parent, type, selector, handler){
-    parent.addEventListener(type, function(event){
+function delegate(parent, type, selector, handler) {
+    parent.addEventListener(type, function (event) {
         const targetElement = event.target.closest(selector);
-        if(this.contains(targetElement)){
+        if (this.contains(targetElement)) {
             handler.call(targetElement, event);
         }
     })
 }
-*/
+

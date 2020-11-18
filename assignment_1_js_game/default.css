@@ -44,3 +44,8 @@
 .card img{
     height: 10em;
 }
+.selectPlayer {
+    font-weight: bold;
+    font-size: 150%;
+    color: green;
+}
