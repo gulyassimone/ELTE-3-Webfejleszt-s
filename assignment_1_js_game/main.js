@@ -16,21 +16,21 @@ const findSetButton = document.querySelector("#find_set_button");
 const addCardsButton = document.querySelector("#add_cards_button");
 
 const shapes = {
-    DIAMOND: {magyar: "rombusz", english: "diamond", code: 'D'},
-    OVAL: {magyar: "ovális", english: "oval", code: 'P'},
-    SQUIGGLE: {magyar: "hullámos", english: "squiggle", code: 'S'}
+    DIAMOND: {codeNumb: 1, english: "diamond", code: 'D'},
+    OVAL: {codeNumb: 2, english: "oval", code: 'P'},
+    SQUIGGLE: {codeNumb: 3, english: "squiggle", code: 'S'}
 };
 
 const colors = {
-    GREEN: {magyar: "zöld", english: "green", code: 'g'},
-    PURPLE: {magyar: "lila", english: "purple", code: 'p'},
-    RED: {magyar: "piros", english: "red", code: 'r'}
+    GREEN: {codeNumb: 1, english: "green", code: 'g'},
+    PURPLE: {codeNumb: 2, english: "purple", code: 'p'},
+    RED: {codeNumb: 3, english: "red", code: 'r'}
 };
 
 const fills = {
-    SOLID: {magyar: "teli", english: "solid", code: "S",},
-    STRIPPED: {magyar: "csíkos", english: "stripped", code: "H"},
-    OPEN: {magyar: "üres", english: "open", code: "O"}
+    SOLID: {codeNumb: 1, english: "solid", code: "S",},
+    STRIPPED: {codeNumb: 2, english: "stripped", code: "H"},
+    OPEN: {codeNumb: 3, english: "open", code: "O"}
 };
 
 class Player {
@@ -61,26 +61,32 @@ class Player {
     }
 
     pointIncreasing() {
-        this._point = point - 1;
+        this._point += 1;
     }
 
     pointDecreasing() {
-        this._point = point + 1;
+        this._point -= 1;
     }
-    reset(){
+
+    reset() {
         this._point = 0;
         this._selected = 0;
     }
 };
 
 class Card {
-    constructor(shape, color, number, fill, id) {
+    constructor(shape, color, number, fill, id, codeNumb) {
         this._selected = 0;
         this._shape = shape;
         this._color = color;
         this._number = number;
         this._fill = fill;
         this._id = id;
+        this._codeNumb = codeNumb;
+    }
+
+    get codeNumb() {
+        return this._codeNumb;
     }
 
     get shape() {
@@ -126,26 +132,27 @@ class Card {
 
 const deck = {
     deck: [],
-    selectedCards: {number : 0, cards: []},
-    addSelectedCards: function(card) {
+    selectedCards: {number: 0, cards: []},
+
+    addSelectedCards: function (card) {
         this.selectedCards.cards.push(card);
-        this.selectedCards.number+=1;
+        this.selectedCards.number += 1;
     },
 
-    removeSelectedCards: function(card) {
+    removeSelectedCards: function (card) {
         const index = this.deck.indexOf(card);
         if (index > -1) {
             this.selectedCards.cards.splice(index, 1);
         }
-        this.selectedCards.cards.forEach(element => console.log(element+" "));
-        this.selectedCards.number-=1;
+        this.selectedCards.cards.forEach(element => console.log(element + " "));
+        this.selectedCards.number -= 1;
     },
-    resetSelectCards: function(){
-        this.selectedCards.cards.forEach(elem =>  elem.back());
+    resetSelectCards: function () {
+        this.selectedCards.cards.forEach(elem => elem.back());
         this.selectedCards.cards = [];
         this.selectedCards.number = 0;
         let temp = document.querySelectorAll(".card");
-        temp.forEach(elem =>  elem.classList.remove("selectCard"));
+        temp.forEach(elem => elem.classList.remove("selectCard"));
     },
 
     init: function () {
@@ -158,7 +165,11 @@ const deck = {
     },
     createTable: function () {
         let sum = 0;
-        this.deck.forEach(element => element.writeToConsole());
+        /**
+         * @todo delete comment
+         * @type {HTMLTableElement}
+         */
+            // this.deck.forEach(element => element.writeToConsole());
         let table = document.createElement('table');
         for (let i = 0; i < 3; i++) {
             const row = document.createElement('tr');
@@ -181,7 +192,7 @@ const deck = {
             for (const shape in shapes) {
                 for (const color in colors) {
                     for (const fill in fills) {
-                        const card = new Card(shape, color, i, fill, `${i}${fills[fill].code}${colors[color].code}${shapes[shape].code}`);
+                        const card = new Card(shape, color, i, fill, `${i}${fills[fill].code}${colors[color].code}${shapes[shape].code}`, [i, fills[fill].codeNumb, colors[color].codeNumb, shapes[shape].codeNumb]);
                         this.deck.push(card);
                     }
                 }
@@ -255,14 +266,36 @@ const game = {
         }
         playersContainer.appendChild(table);
     },
-
+    /**
+     * This function unselect the selected player.
+     */
+    unselectPlayer: function () {
+        this.existSelected.player.unselect();
+        game.notExistSelect();
+        const activePlayer = document.querySelector(".selectPlayer");
+        activePlayer.classList.remove("selectPlayer");
+    },
     reset: function () {
         this.players = [];
         deck.reset();
         playersContainer.innerHTML = "";
         this.existSelected.number = 0;
         this.existSelected.player = null;
+    },
+    isSet: function(cards) {
+    const isSet = [...cards[0].codeNumb];
+    for (let j = 0; j < isSet.length; j++) {
+        for (let i = 1; i < 3; i++) {
+            const length = cards[i].codeNumb.length;
+            isSet[j] += cards[i].codeNumb[j]
+            if (i == 2 && isSet[j] % 3 != 0) {
+                return false;
+            }
+        }
     }
+    console.log(isSet);
+    return true;
+}
 };
 
 showRules.addEventListener("click", function (event) {
@@ -318,32 +351,38 @@ delegate(playersContainer, "click", 'tr td:nth-child(1)', function (event) {
         player.setSelected();
         game.setExistSelect(player);
         activePlayer.classList.add("selectPlayer");
-    } else if (player.selected && deck.selectedCards.number<3) {
-        player.unselect();
-        game.notExistSelect();
-        activePlayer.classList.remove("selectPlayer");
+    } else if (player.selected && deck.selectedCards.number < 3) {
+        game.unselectPlayer();
         deck.resetSelectCards();
     }
 });
 
-function selectCardHandle(event){
-    if(deck.selectedCards.number<3 && game.existSelected.number){
+function selectCardHandle(event) {
+    if (deck.selectedCards.number < 3 && game.existSelected.number) {
 
-        let card = deck.deck.find(element =>  element.id === event.target.alt);
-        if(!card.selected){
+        let card = deck.deck.find(element => element.id === event.target.alt);
+        if (!card.selected) {
             event.target.classList.add("selectCard");
             deck.addSelectedCards(card);
             card.select();
-        }else{
+        } else {
             event.target.classList.remove("selectCard");
             deck.removeSelectedCards(card);
             card.back();
         }
     }
-    else if(deck.selectedCards.number===3 && game.existSelected.number){
-
+    if (deck.selectedCards.number === 3 && game.isSet(deck.selectedCards.cards)) {
+        game.existSelected.player.pointIncreasing();
+        deck.resetSelectCards();
+        game.unselectPlayer();
+    } else if (deck.selectedCards.number === 3) {
+        game.existSelected.player.pointDecreasing();
+        deck.resetSelectCards();
+        game.unselectPlayer();
     }
 };
+
+
 
 function delegate(parent, type, selector, handler) {
     parent.addEventListener(type, function (event) {

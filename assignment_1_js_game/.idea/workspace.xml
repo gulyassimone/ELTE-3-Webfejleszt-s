@@ -55,6 +55,7 @@
       <workItem from="1605352742565" duration="5500000" />
       <workItem from="1605447843204" duration="2531000" />
       <workItem from="1605617630088" duration="11186000" />
+      <workItem from="1605701347581" duration="12742000" />
     </task>
     <servers />
   </component>
@@ -66,5 +67,9 @@
       <screen x="0" y="40" width="2560" height="1400" />
     </state>
     <state x="1085" y="456" key="#com.intellij.ide.util.MemberChooser/0.40.2560.1400/-1920.6.1920.1040@0.40.2560.1400" timestamp="1605620596452" />
+    <state x="987" y="433" width="585" height="534" key="find.popup" timestamp="1605709027881">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="987" y="433" width="585" height="534" key="find.popup/0.0.2560.1400/-1920.6.1920.1040@0.0.2560.1400" timestamp="1605709027881" />
   </component>
 </project>
