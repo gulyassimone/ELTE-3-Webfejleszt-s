@@ -67,6 +67,10 @@ class Player {
     pointDecreasing() {
         this._point = point + 1;
     }
+    reset(){
+        this._point = 0;
+        this._selected = 0;
+    }
 };
 
 class Card {
@@ -122,7 +126,28 @@ class Card {
 
 const deck = {
     deck: [],
-    existSelected: {number : 0, cards: []},
+    selectedCards: {number : 0, cards: []},
+    addSelectedCards: function(card) {
+        this.selectedCards.cards.push(card);
+        this.selectedCards.number+=1;
+    },
+
+    removeSelectedCards: function(card) {
+        const index = this.deck.indexOf(card);
+        if (index > -1) {
+            this.selectedCards.cards.splice(index, 1);
+        }
+        this.selectedCards.cards.forEach(element => console.log(element+" "));
+        this.selectedCards.number-=1;
+    },
+    resetSelectCards: function(){
+        this.selectedCards.cards.forEach(elem =>  elem.back());
+        this.selectedCards.cards = [];
+        this.selectedCards.number = 0;
+        let temp = document.querySelectorAll(".card");
+        temp.forEach(elem =>  elem.classList.remove("selectCard"));
+    },
+
     init: function () {
         const n = 3;
         const m = 4;
@@ -139,10 +164,11 @@ const deck = {
             const row = document.createElement('tr');
             for (let j = 0; j < 4; j++) {
                 const cell = document.createElement('td');
-                cell.innerHTML = `<div class="card"><img src=./icons/${this.deck[sum].id}.svg alt="some file"/></div>`;
+                cell.innerHTML = `<img class="card" src=./icons/${this.deck[sum].id}.svg alt=${this.deck[sum].id}>`;
                 row.appendChild(cell);
                 ++sum;
-                cell.addEventListener("click", selectCardHandle)
+
+                cell.firstChild.addEventListener("click", selectCardHandle)
             }
             table.appendChild(row);
         }
@@ -172,7 +198,9 @@ const deck = {
     },
     reset: function () {
         this.deck = [];
+        this.resetSelectCards();
         tableContainer.innerHTML = "";
+
     }
 };
 
@@ -232,6 +260,8 @@ const game = {
         this.players = [];
         deck.reset();
         playersContainer.innerHTML = "";
+        this.existSelected.number = 0;
+        this.existSelected.player = null;
     }
 };
 
@@ -239,7 +269,7 @@ showRules.addEventListener("click", function (event) {
     rules.style.display = "block";
 });
 window.addEventListener("click", function (event) {
-    if (event.target == rules) {
+    if (event.target === rules) {
         rules.style.display = "none";
     }
 });
@@ -258,7 +288,7 @@ playersNumber.addEventListener("keypress", function (event) {
 });
 
 gameMode.addEventListener("change", function (event) {
-    if (event.target.value == "competitive") {
+    if (event.target.value === "competitive") {
         specialOptions.classList.add("hide");
         existSetButton.classList.add("hide");
         findSetButton.classList.add("hide");
@@ -267,7 +297,7 @@ gameMode.addEventListener("change", function (event) {
         findSetCheckbox.checked = false;
         addCardsCheckbox.checked = true;
     }
-    if (event.target.value == "practice") {
+    if (event.target.value === "practice") {
         specialOptions.classList.remove("hide");
         existSetButton.classList.remove("hide");
         findSetButton.classList.remove("hide");
@@ -280,25 +310,39 @@ play.addEventListener("click", function (event) {
     game.init();
 });
 
-delegate(playersContainer, "click", 'tr', function (event) {
+delegate(playersContainer, "click", 'tr td:nth-child(1)', function (event) {
     const activePlayer = event.target;
-    let player = game.players.find(element => element.name == activePlayer.innerText);
+    let player = game.players.find(element => element.name === activePlayer.innerText);
 
     if (!game.existSelected.number) {
         player.setSelected();
         game.setExistSelect(player);
-        activePlayer.classList.add("selectPlayer")
-        console.log(game.existSelected.player)
-    } else if (player.selected) {
+        activePlayer.classList.add("selectPlayer");
+    } else if (player.selected && deck.selectedCards.number<3) {
         player.unselect();
         game.notExistSelect();
         activePlayer.classList.remove("selectPlayer");
-        console.log(game.existSelected.player)
+        deck.resetSelectCards();
     }
 });
 
 function selectCardHandle(event){
-    event.target.classList.toggle("selectCard");
+    if(deck.selectedCards.number<3 && game.existSelected.number){
+
+        let card = deck.deck.find(element =>  element.id === event.target.alt);
+        if(!card.selected){
+            event.target.classList.add("selectCard");
+            deck.addSelectedCards(card);
+            card.select();
+        }else{
+            event.target.classList.remove("selectCard");
+            deck.removeSelectedCards(card);
+            card.back();
+        }
+    }
+    else if(deck.selectedCards.number===3 && game.existSelected.number){
+
+    }
 };
 
 function delegate(parent, type, selector, handler) {
