@@ -1,4 +1,3 @@
-const menuDiv = document.querySelector("#menu");
 const gameDiv = document.querySelector("#game");
 const playersNumber = document.querySelector("#players_number");
 const gameMode = document.querySelector("#game_mod");
@@ -69,17 +68,10 @@ class Player {
     pointDecreasing() {
         this._point -= 1;
     }
-
-    reset() {
-        this._point = 0;
-        this._selected = 0;
-    }
-};
-
+}
 
 class Card {
     constructor(shape, color, number, fill, id, codeNumb) {
-        this._selected = 0;
         this._shape = shape;
         this._color = color;
         this._number = number;
@@ -100,10 +92,6 @@ class Card {
         return this._color;
     }
 
-    get number() {
-        return this._number;
-    }
-
     get fill() {
         return this._fill;
     }
@@ -112,22 +100,10 @@ class Card {
         return this._id;
     }
 
-    get selected() {
-        return this._selected;
-    }
-
     writeToConsole() {
         console.log(`id = ${this._id} number = ${this._number} form = ${this._shape} color = ${this._color} fill = ${this._fill} selected = ${this._selected}`);
     }
-
-    select() {
-        this._selected = 1;
-    }
-
-    back() {
-        this._selected = 0;
-    }
-};
+}
 const deck = {
     remainingCards: [],
     cardsOnTable: [],
@@ -148,29 +124,24 @@ const deck = {
     },
     createTable: function () {
         tableContainer.innerHTML = "";
-        let table = document.createElement('table');
+        const table = document.createElement('table');
+        console.log(this.cardsOnTable);
+        const tdNumber = this.cardsOnTable.length/3;
+        console.log(tdNumber);
         let sum = 1;
         let row = document.createElement('tr');
         this.cardsOnTable.forEach(function (cardOnTable) {
             const cell = document.createElement('td');
             cell.innerHTML = `<img class="card" src=./icons/${cardOnTable.id}.svg alt=${cardOnTable.id}>`;
             row.appendChild(cell);
-            cell.firstChild.addEventListener("click", selectCardHandle)
-            if (sum % 4 == 0) {
+            cell.firstChild.addEventListener("click", selectCardHandle);
+            if (sum % tdNumber === 0) {
                 table.appendChild(row);
                 row = document.createElement('tr');
             }
             sum++;
-        })
-        for (let i = 0; i < 3; i++) {
-            const row = document.createElement('tr');
-            for (let j = 0; j < 4; j++) {
-
-            }
-
-        }
+        });
         tableContainer.appendChild(table);
-        console.log(this.cardsOnTable);
     },
     generateDeck: function () {
         for (let i = 1; i < 4; ++i) {
@@ -203,14 +174,11 @@ const deck = {
         this.selectedCards.number += 1;
     },
     /**
-     * @todo nem tudom miért, de működik, viszont szerintem javítani kell
+     *
      * @param card
      */
     removeSelectedCards: function (card) {
-        const index = this.remainingCards.indexOf(card);
-        if (index > -1) {
-            this.selectedCards.cards.splice(index, 1);
-        }
+        this.selectedCards.cards = arrayRemove(this.selectedCards.cards , card);
         this.selectedCards.cards.forEach(element => console.log(element + " "));
         this.selectedCards.number -= 1;
     },
@@ -223,27 +191,32 @@ const deck = {
     /**
      * add 3 cards to table
      */
-    addCardsToTable() {
-        const actualTable = document.querySelectorAll('#table-container td');
-        let newTd = true;
-        for (let i = 0; i < actualTable.length; ++i) {
-            if (actualTable[i].innerHTML == "" && deck.remainingCards.length > 0) {
-                const temp = this.remainingCards.pop();
-                this.cardsOnTable.push(temp);
-                actualTable[i].innerHTML = `<img class="card" src=./icons/${temp.id}.svg alt=${temp.id}>`;
-                actualTable[i].addEventListener("click", selectCardHandle);
-                newTd = false;
+    addCardsToTable: function() {
+        if(this.remainingCards.length !== 0 ) {
+            const actualTable = document.querySelectorAll('#table-container td');
+            let newTd = true;
+            for (let i = 0; i < actualTable.length; ++i) {
+                if (actualTable[i].innerHTML === "" && deck.remainingCards.length > 0) {
+                    const temp = this.remainingCards.pop();
+                    this.cardsOnTable.push(temp);
+                    actualTable[i].innerHTML = `<img class="card" src=./icons/${temp.id}.svg alt=${temp.id}>`;
+                    actualTable[i].addEventListener("click", selectCardHandle);
+                    newTd = false;
+                }
             }
-        }
-        const rows = document.querySelectorAll('#table-container tr');
-        if (newTd) {
-            for (let i = 0; i < rows.length; i++) {
-                const temp = this.remainingCards.pop();
-                this.cardsOnTable.push(temp);
-                const cell = document.createElement('td');
-                cell.innerHTML = `<img class="card" src=./icons/${temp.id}.svg alt=${temp.id}>`;
-                cell.firstChild.addEventListener("click", selectCardHandle);
-                rows[i].appendChild(cell);
+            const rows = document.querySelectorAll('#table-container tr');
+            if (newTd) {
+                for (let i = 0; i < rows.length; i++) {
+                    const temp = this.remainingCards.pop();
+                    this.cardsOnTable.push(temp);
+                    const cell = document.createElement('td');
+                    cell.innerHTML = `<img class="card" src=./icons/${temp.id}.svg alt=${temp.id}>`;
+                    cell.firstChild.addEventListener("click", selectCardHandle);
+                    rows[i].appendChild(cell);
+                }
+            }
+            if (this.remainingCards.length === 0) {
+                deckContainer.classList.add("hide");
             }
         }
     },
@@ -252,7 +225,6 @@ const deck = {
      * @param cards
      */
     dropCardsFromTable: function (cards) {
-        console.log(this)
         const actualTable = document.querySelectorAll('#table-container img');
         for (let k = 0; k < cards.length; ++k) {
             for (let i = 0; i < actualTable.length; ++i) {
@@ -264,10 +236,14 @@ const deck = {
         }
         this.createTable();
 
-        if (this.cardsOnTable.length < 12 && this.remainingCards.length > 0 && gameMode.value === "practice") {
+        const existSet=(this.existSetOnTable()===[]);
+        if ((this.cardsOnTable.length < 12 || existSet) && this.remainingCards.length > 0 && gameMode.value === "competitive" ) {
             setTimeout(function () {
-                this.addCardsToTable();
+                deck.addCardsToTable();
             }, 2000);
+        }
+        if(existSet && this.remainingCards.length === 0 ){
+            result.innerHTML = "A játék befejeződött!";
         }
     },
 
@@ -278,8 +254,8 @@ const deck = {
             console.log(this.cardsOnTable[i]);
             for (let j= 0; j< this.cardsOnTable.length; j++) {
                 for (let k = 0; k< this.cardsOnTable.length; k++) {
-                    if (this.cardsOnTable[i].id != this.cardsOnTable[j].id && this.cardsOnTable[j].id != this.cardsOnTable[k].id && this.cardsOnTable[i].id != this.cardsOnTable[k].id) {
-                        const temp = [this.cardsOnTable[i], this.cardsOnTable[j], this.cardsOnTable[k]]
+                    if (this.cardsOnTable[i].id !== this.cardsOnTable[j].id && this.cardsOnTable[j].id !== this.cardsOnTable[k].id &&this.cardsOnTable[i].id !== this.cardsOnTable[k].id) {
+                        const temp = [this.cardsOnTable[i], this.cardsOnTable[j], this.cardsOnTable[k]];
                         if (game.isSet(temp)) {
                             return temp;
                         }
@@ -321,9 +297,9 @@ const game = {
         const playerHeadRow = document.createElement('tr');
 
         playerColumnNameHead.innerHTML = 'Név';
-        playerColumnPointHead.innerHTML = 'Pont'
+        playerColumnPointHead.innerHTML = 'Pont';
 
-        playerHeadRow.appendChild(playerColumnNameHead)
+        playerHeadRow.appendChild(playerColumnNameHead);
         playerHeadRow.appendChild(playerColumnPointHead);
 
         table.appendChild(playerHeadRow);
@@ -363,9 +339,8 @@ const game = {
         const isSet = [...cards[0].codeNumb];
         for (let j = 0; j < isSet.length; j++) {
             for (let i = 1; i < 3; i++) {
-                const length = cards[i].codeNumb.length;
-                isSet[j] += cards[i].codeNumb[j]
-                if (i == 2 && isSet[j] % 3 != 0) {
+                isSet[j] += cards[i].codeNumb[j];
+                if (i === 2 && isSet[j] % 3 !== 0) {
                     return false;
                 }
             }
@@ -374,7 +349,7 @@ const game = {
     }
 };
 
-showRules.addEventListener("click", function (event) {
+showRules.addEventListener("click", function () {
     rules.style.display = "block";
 });
 window.addEventListener("click", function (event) {
@@ -382,7 +357,7 @@ window.addEventListener("click", function (event) {
         rules.style.display = "none";
     }
 });
-rules.addEventListener("click", function (event) {
+rules.addEventListener("click", function () {
     rules.style.display = "none";
 });
 document.addEventListener("click", function (event) {
@@ -414,17 +389,17 @@ gameMode.addEventListener("change", function (event) {
     }
 });
 
-play.addEventListener("click", function (event) {
+play.addEventListener("click", function () {
     gameDiv.style.display = "block";
     game.init();
 });
 
 addCardsButton.addEventListener('click', deck.addCardsToTable.bind(deck));
-existSetButton.addEventListener("click", function (event) {
+existSetButton.addEventListener("click", function () {
     const exist = deck.existSetOnTable();
-    result.innerHTML = (exist != []) ? "Van benne SET" : "Nincs benne SET";
+    result.innerHTML = (exist !== []) ? "Van benne SET" : "Nincs benne SET";
     console.log(exist);
-})
+});
 
 
 delegate(playersContainer, "click", 'tr td:nth-child(1) button', function (event) {
@@ -441,9 +416,9 @@ delegate(playersContainer, "click", 'tr td:nth-child(1) button', function (event
     }
 });
 
-function arrayRemove(arr, value) {
-    return arr.filter(function (ele) {
-        return ele != value;
+function arrayRemove(array, value) {
+    return array.filter(function (elem) {
+        return elem !== value;
     });
 }
 
@@ -454,11 +429,9 @@ function selectCardHandle(event) {
         if (!card.selected) {
             event.target.classList.add("selectCard");
             deck.addSelectedCards(card);
-            card.select();
         } else {
             event.target.classList.remove("selectCard");
             deck.removeSelectedCards(card);
-            card.back();
         }
     }
     if (deck.selectedCards.number === 3) {
@@ -481,7 +454,7 @@ function selectCardHandle(event) {
             result.innerHTML = "";
         }, 5000);
     }
-};
+}
 
 function delegate(parent, type, selector, handler) {
     parent.addEventListener(type, function (event) {
@@ -490,6 +463,6 @@ function delegate(parent, type, selector, handler) {
             handler.call(targetElement, event);
         }
     })
-};
+}
 
 
