@@ -15,6 +15,7 @@ const existSetButton = document.querySelector("#exist_set_button");
 const findSetButton = document.querySelector("#find_set_button");
 const addCardsButton = document.querySelector("#add_cards_button");
 const result = document.querySelector("#result");
+const deckContainer = document.querySelector("#deck");
 
 const shapes = {
     DIAMOND: {codeNumb: 1, english: "diamond", code: 'D'},
@@ -75,12 +76,6 @@ class Player {
     }
 };
 
-function arrayRemove(arr, value) {
-    console.log(arr)
-    return arr.filter(function (ele) {
-        return ele != value;
-    });
-}
 
 class Card {
     constructor(shape, color, number, fill, id, codeNumb) {
@@ -138,27 +133,6 @@ const deck = {
     cardsOnTable: [],
     selectedCards: {number: 0, cards: []},
 
-
-    addSelectedCards: function (card) {
-        this.selectedCards.cards.push(card);
-        this.selectedCards.number += 1;
-    },
-
-    removeSelectedCards: function (card) {
-        const index = this.remainingCards.indexOf(card);
-        if (index > -1) {
-            this.selectedCards.cards.splice(index, 1);
-        }
-        this.selectedCards.cards.forEach(element => console.log(element + " "));
-        this.selectedCards.number -= 1;
-    },
-    resetSelectedCards: function () {
-        this.selectedCards.cards = [];
-        this.selectedCards.number = 0;
-        let temp = document.querySelectorAll(".card");
-        temp.forEach(elem => elem.classList.remove("selectCard"));
-    },
-
     init: function () {
         this.generateDeck();
         /**
@@ -166,21 +140,34 @@ const deck = {
          */
         //this.remainingCards.forEach(element => element.writeToConsole());
         this.shuffle();
+        for (let i = 0; i < 12; i++) {
+            const temp = this.remainingCards.pop();
+            this.cardsOnTable.push(temp);
+        }
         this.createTable();
     },
     createTable: function () {
+        tableContainer.innerHTML = "";
         let table = document.createElement('table');
+        let sum = 1;
+        let row = document.createElement('tr');
+        this.cardsOnTable.forEach(function (cardOnTable) {
+            const cell = document.createElement('td');
+            cell.innerHTML = `<img class="card" src=./icons/${cardOnTable.id}.svg alt=${cardOnTable.id}>`;
+            row.appendChild(cell);
+            cell.firstChild.addEventListener("click", selectCardHandle)
+            if (sum % 4 == 0) {
+                table.appendChild(row);
+                row = document.createElement('tr');
+            }
+            sum++;
+        })
         for (let i = 0; i < 3; i++) {
             const row = document.createElement('tr');
             for (let j = 0; j < 4; j++) {
-                const cell = document.createElement('td');
-                const temp = this.remainingCards.pop();
-                this.cardsOnTable.push(temp);
-                cell.innerHTML = `<img class="card" src=./icons/${temp.id}.svg alt=${temp.id}>`;
-                row.appendChild(cell);
-                cell.firstChild.addEventListener("click", selectCardHandle)
+
             }
-            table.appendChild(row);
+
         }
         tableContainer.appendChild(table);
         console.log(this.cardsOnTable);
@@ -207,8 +194,31 @@ const deck = {
     },
     reset: function () {
         this.remainingCards = [];
+        this.cardsOnTable = [];
         this.resetSelectedCards();
         tableContainer.innerHTML = "";
+    },
+    addSelectedCards: function (card) {
+        this.selectedCards.cards.push(card);
+        this.selectedCards.number += 1;
+    },
+    /**
+     * @todo nem tudom miért, de működik, viszont szerintem javítani kell
+     * @param card
+     */
+    removeSelectedCards: function (card) {
+        const index = this.remainingCards.indexOf(card);
+        if (index > -1) {
+            this.selectedCards.cards.splice(index, 1);
+        }
+        this.selectedCards.cards.forEach(element => console.log(element + " "));
+        this.selectedCards.number -= 1;
+    },
+    resetSelectedCards: function () {
+        this.selectedCards.cards = [];
+        this.selectedCards.number = 0;
+        let temp = document.querySelectorAll(".card");
+        temp.forEach(elem => elem.classList.remove("selectCard"));
     },
     /**
      * add 3 cards to table
@@ -242,6 +252,7 @@ const deck = {
      * @param cards
      */
     dropCardsFromTable: function (cards) {
+        console.log(this)
         const actualTable = document.querySelectorAll('#table-container img');
         for (let k = 0; k < cards.length; ++k) {
             for (let i = 0; i < actualTable.length; ++i) {
@@ -251,7 +262,32 @@ const deck = {
             }
             this.cardsOnTable = arrayRemove(this.cardsOnTable, cards[k]);
         }
+        this.createTable();
+
+        if (this.cardsOnTable.length < 12 && this.remainingCards.length > 0 && gameMode.value === "practice") {
+            setTimeout(function () {
+                this.addCardsToTable();
+            }, 2000);
+        }
+    },
+
+    existSetOnTable: function () {
         console.log(this.cardsOnTable);
+        for (let i = 0; i< this.cardsOnTable.length; i++) {
+            console.log("cardOnTable1");
+            console.log(this.cardsOnTable[i]);
+            for (let j= 0; j< this.cardsOnTable.length; j++) {
+                for (let k = 0; k< this.cardsOnTable.length; k++) {
+                    if (this.cardsOnTable[i].id != this.cardsOnTable[j].id && this.cardsOnTable[j].id != this.cardsOnTable[k].id && this.cardsOnTable[i].id != this.cardsOnTable[k].id) {
+                        const temp = [this.cardsOnTable[i], this.cardsOnTable[j], this.cardsOnTable[k]]
+                        if (game.isSet(temp)) {
+                            return temp;
+                        }
+                    }
+                }
+            }
+        }
+        return [];
     }
 };
 
@@ -297,7 +333,7 @@ const game = {
             const playerColumnName = document.createElement('td');
             const playerColumnPoint = document.createElement('td');
 
-            playerColumnName.innerHTML = this.players[i].name;
+            playerColumnName.innerHTML = `<button type = button>${this.players[i].name}</button>`;
             playerColumnPoint.innerHTML = this.players[i].point;
 
             playerLine.appendChild(playerColumnName);
@@ -383,7 +419,15 @@ play.addEventListener("click", function (event) {
     game.init();
 });
 
-delegate(playersContainer, "click", 'tr td:nth-child(1)', function (event) {
+addCardsButton.addEventListener('click', deck.addCardsToTable.bind(deck));
+existSetButton.addEventListener("click", function (event) {
+    const exist = deck.existSetOnTable();
+    result.innerHTML = (exist != []) ? "Van benne SET" : "Nincs benne SET";
+    console.log(exist);
+})
+
+
+delegate(playersContainer, "click", 'tr td:nth-child(1) button', function (event) {
     const activePlayer = event.target;
     let player = game.players.find(element => element.name === activePlayer.innerText);
 
@@ -396,6 +440,12 @@ delegate(playersContainer, "click", 'tr td:nth-child(1)', function (event) {
         deck.resetSelectedCards();
     }
 });
+
+function arrayRemove(arr, value) {
+    return arr.filter(function (ele) {
+        return ele != value;
+    });
+}
 
 function selectCardHandle(event) {
     if (deck.selectedCards.number < 3 && game.existSelected.number) {
@@ -419,12 +469,6 @@ function selectCardHandle(event) {
             deck.resetSelectedCards();
             game.unselectPlayer();
             game.writePlayers();
-            if(deck.cardsOnTable.length<12){
-                setTimeout(function () {
-                    deck.addCardsToTable();
-                }, 2000);
-            }
-
         } else {
             game.existSelected.player.pointDecreasing();
             deck.selectedCards.cards.forEach(elem => elem.back());
@@ -438,8 +482,6 @@ function selectCardHandle(event) {
         }, 5000);
     }
 };
-
-addCardsButton.addEventListener('click', deck.addCardsToTable.bind(deck));
 
 function delegate(parent, type, selector, handler) {
     parent.addEventListener(type, function (event) {

@@ -19,7 +19,7 @@ Minimálisan teljesítendő (6 pont)
 - [x] 3 kártya kijelölhető. (1 pont)
 - [x] 3 kártya kijelölése után a program eldönti és jelzi, hogy helyes vagy helytelen SET-e. (1 pont)
 - [x] Helyes SET esetén a 3 kártya levételre kerül és újabb 3 kártyával pótlódik. (1 pont)
-- [ ] Mindez addig tart, amíg el nem fogy a pakli. (0,5 pont)
+- [x] Mindez addig tart, amíg el nem fogy a pakli. (0,5 pont)
 - [ ] Ha nincs SET a leosztásban, akkor véget ér a játék. (0,5 pont)
 
 Az alap feladatok (14 pont)
