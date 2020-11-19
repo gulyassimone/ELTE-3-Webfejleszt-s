@@ -14,6 +14,7 @@ const playersContainer = document.querySelector('#players');
 const existSetButton = document.querySelector("#exist_set_button");
 const findSetButton = document.querySelector("#find_set_button");
 const addCardsButton = document.querySelector("#add_cards_button");
+const result = document.querySelector("#result");
 
 const shapes = {
     DIAMOND: {codeNumb: 1, english: "diamond", code: 'D'},
@@ -124,33 +125,13 @@ class Card {
     back() {
         this._selected = 0;
     }
-
-    drop() {
-        this._selected = -1;
-    }
 };
 
 const deck = {
     remainingCards: [],
+    cardsOnTable:[],
     selectedCards: {number: 0, cards: []},
-    addCardsToTable: function () {
-        const actualTable = document.querySelectorAll('#table-container td');
-        let newTd = true;
 
-        actualTable.forEach(element => function (element) {
-            if (element.innerHTML == "" && this.remainingCards.length > 0) {
-                element.innerHTML = `<img class="card" src=./icons/${deck.remainingCards.pop().id}.svg alt=${deck.remainingCards.pop().id}>`;
-                newTd = false;
-            }
-        })
-        if (newTd) {
-            const rows = document.querySelectorAll('#table-container tr');
-            const cell = document.createElement('td');
-            cell.innerHTML = `<img class="card" src=./icons/${deck.remainingCards.pop().id}.svg alt=${deck.remainingCards.pop().id}>`;
-            cell.firstChild.addEventListener("click", selectCardHandle);
-            rows.forEach(row => row.appendChild(cell));
-        }
-    },
     addSelectedCards: function (card) {
         this.selectedCards.cards.push(card);
         this.selectedCards.number += 1;
@@ -165,7 +146,6 @@ const deck = {
         this.selectedCards.number -= 1;
     },
     resetSelectedCards: function () {
-        this.selectedCards.cards.forEach(elem => elem.back());
         this.selectedCards.cards = [];
         this.selectedCards.number = 0;
         let temp = document.querySelectorAll(".card");
@@ -182,24 +162,23 @@ const deck = {
         this.createTable();
     },
     createTable: function () {
-
         let table = document.createElement('table');
         for (let i = 0; i < 3; i++) {
             const row = document.createElement('tr');
             for (let j = 0; j < 4; j++) {
                 const cell = document.createElement('td');
-                cell.innerHTML = `<img class="card" src=./icons/${this.remainingCards.pop().id}.svg alt=${this.remainingCards.pop().id}>`;
+                const temp = this.remainingCards.pop();
+                this.cardsOnTable.push(temp);
+                cell.innerHTML = `<img class="card" src=./icons/${temp.id}.svg alt=${temp.id}>`;
                 row.appendChild(cell);
-
                 cell.firstChild.addEventListener("click", selectCardHandle)
             }
             table.appendChild(row);
         }
         tableContainer.appendChild(table);
+        console.log(this.cardsOnTable);
     },
-
     generateDeck: function () {
-
         for (let i = 1; i < 4; ++i) {
             for (const shape in shapes) {
                 for (const color in colors) {
@@ -224,7 +203,53 @@ const deck = {
         this.resetSelectedCards();
         tableContainer.innerHTML = "";
     },
-
+    /**
+     * add 3 cards to table
+     */
+    addCardsToTable: function () {
+        const actualTable = document.querySelectorAll('#table-container td');
+        let newTd = true;
+        for(let i = 0; i<actualTable.length; ++i) {
+            if (actualTable[i].innerHTML == "" && deck.remainingCards.length > 0) {
+                const temp = deck.remainingCards.pop();
+                this.cardsOnTable.push(temp);
+                actualTable[i].innerHTML = `<img class="card" src=./icons/${temp.id}.svg alt=${temp.id}>`;
+                actualTable[i].addEventListener("click", selectCardHandle);
+                newTd = false;
+            }
+        }
+        const rows = document.querySelectorAll('#table-container tr');
+        if (newTd) {
+            for(let i=0; i<rows.length; i++){
+                const temp = deck.remainingCards.pop();
+                console.log(temp);
+                this.cardsOnTable.push(temp);
+                const cell = document.createElement('td');
+                cell.innerHTML = `<img class="card" src=./icons/${temp.id}.svg alt=${temp.id}>`;
+                cell.firstChild.addEventListener("click", selectCardHandle);
+                rows[i].appendChild(cell);
+            }
+        }
+    },
+    /**
+     * Drop cards from table
+     * @param cards
+     */
+    dropCardsFromTable: function (cards) {
+        const actualTable = document.querySelectorAll('#table-container img');
+        for(let k=0; k<cards.length; ++k){
+            for(let i = 0; i < actualTable.length; ++i){
+                if(actualTable[i].alt === cards[k].id){
+                    actualTable[i].closest('td').innerHTML = "";
+                }
+            }
+            for(let j = 0; j<deck.cardsOnTable.length; ++j){
+                if(cards[k].id === deck.cardsOnTable[j].id){
+                    deck.cardsOnTable.slice(j,1);
+                }
+            }
+        }
+    }
 };
 
 const game = {
@@ -306,7 +331,6 @@ const game = {
                 }
             }
         }
-        console.log(isSet);
         return true;
     }
 };
@@ -373,7 +397,7 @@ delegate(playersContainer, "click", 'tr td:nth-child(1)', function (event) {
 function selectCardHandle(event) {
     if (deck.selectedCards.number < 3 && game.existSelected.number) {
 
-        let card = deck.remainingCards.find(element => element.id === event.target.alt);
+        let card = deck.cardsOnTable.find(element => element.id === event.target.alt);
         if (!card.selected) {
             event.target.classList.add("selectCard");
             deck.addSelectedCards(card);
@@ -384,21 +408,31 @@ function selectCardHandle(event) {
             card.back();
         }
     }
-    if (deck.selectedCards.number === 3 && game.isSet(deck.selectedCards.cards)) {
-        game.existSelected.player.pointIncreasing();
-        deck.resetSelectedCards();
-        game.unselectPlayer();
-        game.writePlayers();
-    } else if (deck.selectedCards.number === 3) {
-        game.existSelected.player.pointDecreasing();
-        deck.resetSelectedCards();
-        game.unselectPlayer();
-        game.writePlayers();
+    if (deck.selectedCards.number === 3) {
+        const isSet = game.isSet(deck.selectedCards.cards);
+        if (isSet) {
+            game.existSelected.player.pointIncreasing();
+            deck.dropCardsFromTable(deck.selectedCards.cards);
+            deck.resetSelectedCards();
+            game.unselectPlayer();
+            game.writePlayers();
+            console.log(deck.cardsOnTable);
+                setTimeout(function(){
+                    deck.addCardsToTable();
+                }, 2000);
+
+        } else {
+            game.existSelected.player.pointDecreasing();
+            deck.selectedCards.cards.forEach(elem => elem.back());
+            deck.resetSelectedCards();
+            game.unselectPlayer();
+            game.writePlayers();
+        }
+        result.innerHTML = isSet?"Set":"Nem Set";
+        setTimeout(function(){
+            result.innerHTML = "";
+        }, 5000);
     }
-    /**
-     * @todo ki kell venni
-     */
-    console.log(deck.remainingCards);
 };
 
 addCardsButton.addEventListener('click',deck.addCardsToTable);
