@@ -75,6 +75,13 @@ class Player {
     }
 };
 
+function arrayRemove(arr, value) {
+    console.log(arr)
+    return arr.filter(function (ele) {
+        return ele != value;
+    });
+}
+
 class Card {
     constructor(shape, color, number, fill, id, codeNumb) {
         this._selected = 0;
@@ -126,11 +133,11 @@ class Card {
         this._selected = 0;
     }
 };
-
 const deck = {
     remainingCards: [],
-    cardsOnTable:[],
+    cardsOnTable: [],
     selectedCards: {number: 0, cards: []},
+
 
     addSelectedCards: function (card) {
         this.selectedCards.cards.push(card);
@@ -206,12 +213,12 @@ const deck = {
     /**
      * add 3 cards to table
      */
-    addCardsToTable: function () {
+    addCardsToTable() {
         const actualTable = document.querySelectorAll('#table-container td');
         let newTd = true;
-        for(let i = 0; i<actualTable.length; ++i) {
+        for (let i = 0; i < actualTable.length; ++i) {
             if (actualTable[i].innerHTML == "" && deck.remainingCards.length > 0) {
-                const temp = deck.remainingCards.pop();
+                const temp = this.remainingCards.pop();
                 this.cardsOnTable.push(temp);
                 actualTable[i].innerHTML = `<img class="card" src=./icons/${temp.id}.svg alt=${temp.id}>`;
                 actualTable[i].addEventListener("click", selectCardHandle);
@@ -220,9 +227,8 @@ const deck = {
         }
         const rows = document.querySelectorAll('#table-container tr');
         if (newTd) {
-            for(let i=0; i<rows.length; i++){
-                const temp = deck.remainingCards.pop();
-                console.log(temp);
+            for (let i = 0; i < rows.length; i++) {
+                const temp = this.remainingCards.pop();
                 this.cardsOnTable.push(temp);
                 const cell = document.createElement('td');
                 cell.innerHTML = `<img class="card" src=./icons/${temp.id}.svg alt=${temp.id}>`;
@@ -237,18 +243,15 @@ const deck = {
      */
     dropCardsFromTable: function (cards) {
         const actualTable = document.querySelectorAll('#table-container img');
-        for(let k=0; k<cards.length; ++k){
-            for(let i = 0; i < actualTable.length; ++i){
-                if(actualTable[i].alt === cards[k].id){
+        for (let k = 0; k < cards.length; ++k) {
+            for (let i = 0; i < actualTable.length; ++i) {
+                if (actualTable[i].alt === cards[k].id) {
                     actualTable[i].closest('td').innerHTML = "";
                 }
             }
-            for(let j = 0; j<deck.cardsOnTable.length; ++j){
-                if(cards[k].id === deck.cardsOnTable[j].id){
-                    deck.cardsOnTable.slice(j,1);
-                }
-            }
+            this.cardsOnTable = arrayRemove(this.cardsOnTable, cards[k]);
         }
+        console.log(this.cardsOnTable);
     }
 };
 
@@ -416,10 +419,11 @@ function selectCardHandle(event) {
             deck.resetSelectedCards();
             game.unselectPlayer();
             game.writePlayers();
-            console.log(deck.cardsOnTable);
-                setTimeout(function(){
+            if(deck.cardsOnTable.length<12){
+                setTimeout(function () {
                     deck.addCardsToTable();
                 }, 2000);
+            }
 
         } else {
             game.existSelected.player.pointDecreasing();
@@ -428,14 +432,14 @@ function selectCardHandle(event) {
             game.unselectPlayer();
             game.writePlayers();
         }
-        result.innerHTML = isSet?"Set":"Nem Set";
-        setTimeout(function(){
+        result.innerHTML = isSet ? "Set" : "Nem Set";
+        setTimeout(function () {
             result.innerHTML = "";
         }, 5000);
     }
 };
 
-addCardsButton.addEventListener('click',deck.addCardsToTable);
+addCardsButton.addEventListener('click', deck.addCardsToTable.bind(deck));
 
 function delegate(parent, type, selector, handler) {
     parent.addEventListener(type, function (event) {
