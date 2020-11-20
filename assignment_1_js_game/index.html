@@ -20,13 +20,11 @@
                 <li>SZÁM: 1, 2 vagy 3 forma</li>
                 <li>TARTALOM: tömör, csíkos, üres (ez csak a plusz feladatokban jelenik meg.)</li>
             </ul>
-            </p>
             <p>Egy SET 3 kártyából áll, amiben minden jellemzőt külön megvizsgálva, azoknak
             <ul>
                 <li>vagy minden kártyán azonosnak,</li>
                 <li> vagy minden kártyán különbözőnek kell lennie.</li>
             </ul>
-            </p>
             <p>
                 Ennek a szabálynak MINDEN tulajdonság esetében meg kell felelnie a kiválasztott három lapnak. Más
                 szavakkal: a
@@ -39,21 +37,21 @@
     </div>
     <div id="general_options">
         Játékosok száma:
-        <input type="number" id="players_number" min="1" max="10" value="1"><br>
+        <label for="players_number"></label><input type="number" id="players_number" min="1" max="10" value="1"><br>
         Játék mód
-        <select name="game_mod" id="game_mod">
+        <label for="game_mod"></label><select name="game_mod" id="game_mod">
             <option value="practice">Gyakorló</option>
             <option value="competitive">Verseny</option>
         </select>
         <div id="special_options">
             <b>Egyéb beállítások</b><br>
             Van benne SET? gomb
-            <input type="checkbox" id="exist_set_checkbox" name="exist_set_checkbox" value="Van benne SET? gomb"><br>
+            <label for="exist_set_checkbox"></label><input type="checkbox" id="exist_set_checkbox" name="exist_set_checkbox" value="Van benne SET? gomb"><br>
             SET mutatása gomb
-            <input type="checkbox" id="find_set_checkbox" name="find_set_checkout" value="SET mutatása gomb"><br>
+            <label for="find_set_checkbox"></label><input type="checkbox" id="find_set_checkbox" name="find_set_checkout" value="SET mutatása gomb"><br>
             Plusz 3 lap automatikus kiosztás
-            <input type="checkbox" id="add_cards_checkbox" name="add_cards_checkbox" value="Plusz 3 lap automatikus kiosztása"
-                   checked><br>
+            <label for="add_cards_checkbox"></label><input type="checkbox" id="add_cards_checkbox" name="add_cards_checkbox" value="Plusz 3 lap automatikus kiosztása"
+                                                           checked><br>
         </div>
     </div>
     <button id="play" type="button">Indítas</button>
