@@ -20,6 +20,7 @@ const deckContainer = document.querySelector("#deck");
 const playersInput = document.querySelector("#players_input");
 const timerOutput = document.querySelector("#timer");
 const scoreOutput = document.querySelector("#score");
+const remainingCardsCountDown = document.querySelector("#remainingCards");
 let timer = 0;
 
 const shapes = {
@@ -283,6 +284,9 @@ const game = {
         this.createPlayers();
         this.writePlayers();
         this.writeScore();
+        if (parseInt(playersNumber.value) === 1) {
+            startTimer();
+        }
     },
     /**
      * Generates all players according to the data set in the general settings
@@ -326,6 +330,7 @@ const game = {
             document.querySelector("#players td:nth-child(1) button").classList.add("selectPlayer");
             this.setExistSelect(this.players[0]);
         }
+        remainingCardsCountDown.innerHTML = `${deck.remainingCards.length} kártya maradt a pakliban`;
     },
 
     writeScore: function () {
@@ -434,6 +439,7 @@ rules.addEventListener("click", function () {
 
 document.addEventListener("click", function (event) {
     if (event.target.matches(".close")) {
+        stopTimer();
         event.target.closest(".modal").style.display = "none";
         game.reset();
     }
@@ -531,7 +537,7 @@ delegate(playersContainer, "click", 'tr td:nth-child(1) button', function (event
     if (parseInt(playersNumber.value) > 1 && player.selected === 0) {
         game.setExistSelect(player);
         activePlayer.classList.add("selectPlayer");
-        startTimer();
+        startCountDown();
     }
 });
 
@@ -584,7 +590,9 @@ function selectCardHandle(event) {
         setTimeout(function () {
             result.innerHTML = "";
         }, 5000);
-        stopTimer();
+        if (parseInt(playersNumber.value) > 1) {
+            stopTimer();
+        }
 
         if (deck.existSetOnTable().length === 0 && deck.remainingCards.length === 0) {
             game.writeScore();
@@ -608,12 +616,14 @@ function delegate(parent, type, selector, handler) {
     })
 }
 
-
-function startTimer() {
-    let timeleft = 10;
+/**
+ *
+ */
+function startCountDown() {
+    let timeleft = 0;
     timer = setInterval(function () {
             timerOutput.innerHTML = `${10 - timeleft}`;
-            if (timeleft <= 0) {
+            if (timeleft >= 10) {
                 document.querySelector(".selectPlayer").classList.add("inactivePlayer");
                 clearInterval(timer);
                 game.unselectPlayer();
@@ -624,10 +634,19 @@ function startTimer() {
                     timerOutput.innerHTML = "";
                 }, 1000);
             }
-            timeleft -= 1;
+            timeleft += 1;
         }
-        ,
-        1000
+        , 1000
+    );
+}
+
+function startTimer() {
+    let timeleft = 0;
+    timer = setInterval(function () {
+            timerOutput.innerHTML = `${timeleft}`;
+            timeleft += 1;
+        }
+        , 1000
     );
 }
 
