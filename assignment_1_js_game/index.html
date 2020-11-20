@@ -42,10 +42,18 @@
             <label for="players_input_1">1. játékos: </label>
             <input id="players_input_1" type="text" max="50" min="1" value="Játékos1" order_number=1>
         </div>
-        <label for="game_mod">Játék Mód: </label><select name="game_mod" id="game_mod">
-        <option value="practice">Gyakorló</option>
-        <option value="competitive">Verseny</option>
-    </select>
+        <div>
+            <label for="game_mod">Játék Mód: </label><select name="game_mod" id="game_mod">
+            <option value="practice">Gyakorló</option>
+            <option value="competitive">Verseny</option>
+        </select>
+        </div>
+        <div>
+            <label for="level">Nehézségi szint: </label><select name="level" id="level">
+            <option value="normal">Normál</option>
+            <option value="hard">Nehéz</option>
+        </select>
+        </div>
         <div id="special_options">
             <b>Egyéb beállítások</b><br>
             Van benne SET? gomb
@@ -61,14 +69,14 @@
                                                            checked><br>
         </div>
     </div>
-    <button id="play" type="button">Indítás</button>
+    <button id="play" type="button">Start</button>
 </div>
 <div id="game" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
-        <button id="exist_set_button" type="button" class = "hide">Van benne SET?</button>
-        <button id="find_set_button" type="button" class = "hide">SET mutatása</button>
-        <button id="add_cards_button" type="button" class = "hide">Plusz 3 lap automatikus kiosztása</button>
+        <button id="exist_set_button" type="button" class="hide">Van benne SET?</button>
+        <button id="find_set_button" type="button" class="hide">SET mutatása</button>
+        <button id="add_cards_button" type="button" class="hide">Plusz 3 lap automatikus kiosztása</button>
         <div id="result"></div>
         <div id="timer"></div>
         <div id="exist_set_answer"></div>

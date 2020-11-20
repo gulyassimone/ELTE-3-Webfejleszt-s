@@ -1,9 +1,11 @@
 const gameDiv = document.querySelector("#game");
+const modalContent = document.querySelector("#game .modal-content");
 const playersNumber = document.querySelector("#players_number");
 const gameMode = document.querySelector("#game_mod");
 const specialOptions = document.querySelector("#special_options");
 const rules = document.querySelector("#rules");
 const showRules = document.querySelector("#show_rules");
+const level = document.querySelector("#level");
 const existSetCheckbox = document.querySelector("#exist_set_checkbox");
 const findSetCheckbox = document.querySelector("#find_set_checkbox");
 const addCardsCheckbox = document.querySelector("#add_cards_checkbox");
@@ -17,6 +19,7 @@ const result = document.querySelector("#result");
 const deckContainer = document.querySelector("#deck");
 const playersInput = document.querySelector("#players_input");
 const timerOutput = document.querySelector("#timer");
+const scoreOutput = document.querySelector("#score");
 let timer = 0;
 
 const shapes = {
@@ -145,6 +148,7 @@ const deck = {
         if (deck.existSetOnTable().length === 0 && addCardsCheckbox.checked) {
             this.addCardsToTable();
         }
+        deckContainer.classList.remove("hide");
     },
     createTable: function () {
         tableContainer.innerHTML = "";
@@ -169,8 +173,14 @@ const deck = {
         for (let i = 1; i < 4; ++i) {
             for (const shape in shapes) {
                 for (const color in colors) {
-                    for (const fill in fills) {
-                        const card = new Card(shape, color, i, fill, `${i}${fills[fill].code}${colors[color].code}${shapes[shape].code}`, [i, fills[fill].codeNumb, colors[color].codeNumb, shapes[shape].codeNumb]);
+                    if(level.value === "hard"){
+                        for (const fill in fills) {
+                            const card = new Card(shape, color, i, fill, `${i}${fills[fill].code}${colors[color].code}${shapes[shape].code}`, [i, fills[fill].codeNumb, colors[color].codeNumb, shapes[shape].codeNumb]);
+                            this.remainingCards.push(card);
+                        }
+                    }
+                    else{
+                        const card = new Card(shape, color, i, "SOLID", `${i}${fills["SOLID"].code}${colors[color].code}${shapes[shape].code}`, [i, fills["SOLID"].codeNumb, colors[color].codeNumb, shapes[shape].codeNumb]);
                         this.remainingCards.push(card);
                     }
                 }
@@ -244,16 +254,6 @@ const deck = {
             this.cardsOnTable = arrayRemove(this.cardsOnTable, cards[k]);
         }
         this.createTable();
-
-        const existSet = (this.existSetOnTable() === []);
-        if ((this.cardsOnTable.length < 12 || existSet) && this.remainingCards.length > 0 && gameMode.value === "competitive") {
-            setTimeout(function () {
-                deck.addCardsToTable();
-            }, 2000);
-        }
-        if (existSet && this.remainingCards.length === 0) {
-            result.innerHTML = "A játék befejeződött!";
-        }
     },
 
     existSetOnTable: function () {
@@ -283,6 +283,7 @@ const game = {
         deck.init();
         this.createPlayers();
         this.writePlayers();
+        this.writeScore();
     },
     /**
      * Generates all players according to the data set in the general settings
@@ -297,6 +298,35 @@ const game = {
      * Displays all players along with their current points
      */
     writePlayers: function () {
+        const table = document.createElement('table');
+        const playerColumnNameHead = document.createElement('th');
+        const playerHeadRow = document.createElement('tr');
+
+        playerColumnNameHead.innerHTML = 'Név';
+
+        playerHeadRow.appendChild(playerColumnNameHead);
+
+        table.appendChild(playerHeadRow);
+
+        for (let i = 0; i < parseInt(playersNumber.value); ++i) {
+            const playerLine = document.createElement('tr');
+            const playerColumnName = document.createElement('td');
+
+            playerColumnName.innerHTML = `<button type = button>${this.players[i].name}</button>`;
+
+            playerLine.appendChild(playerColumnName);
+            table.appendChild(playerLine)
+        }
+        playersContainer.innerHTML = "";
+        playersContainer.appendChild(table);
+
+        if (parseInt(playersNumber.value) === 1) {
+            document.querySelector("#players td:nth-child(1) button").classList.add("selectPlayer");
+            this.setExistSelect(this.players[0]);
+        }
+    },
+
+    writeScore: function () {
         const table = document.createElement('table');
         const playerColumnNameHead = document.createElement('th');
         const playerColumnPointHead = document.createElement('th');
@@ -315,20 +345,15 @@ const game = {
             const playerColumnName = document.createElement('td');
             const playerColumnPoint = document.createElement('td');
 
-            playerColumnName.innerHTML = `<button type = button>${this.players[i].name}</button>`;
+            playerColumnName.innerHTML = this.players[i].name;
             playerColumnPoint.innerHTML = this.players[i].point;
 
             playerLine.appendChild(playerColumnName);
             playerLine.appendChild(playerColumnPoint);
             table.appendChild(playerLine)
         }
-        playersContainer.innerHTML = "";
-        playersContainer.appendChild(table);
-
-        if (parseInt(playersNumber.value) === 1) {
-            document.querySelector("#players td:nth-child(1) button").classList.add("selectPlayer");
-            this.setExistSelect(this.players[0]);
-        }
+        scoreOutput.innerHTML = "";
+        scoreOutput.appendChild(table);
     },
 
     /**
@@ -466,27 +491,27 @@ findSetButton.addEventListener("click", function () {
         })
     }
 });
-existSetCheckbox.addEventListener("change", function (){
-    if(!existSetCheckbox.checked){
+existSetCheckbox.addEventListener("change", function () {
+    if (!existSetCheckbox.checked) {
         existSetButton.classList.add("hide");
     }
-    if(existSetCheckbox.checked){
+    if (existSetCheckbox.checked) {
         existSetButton.classList.remove("hide");
     }
 })
-findSetCheckbox.addEventListener("change", function (){
-    if(!findSetCheckbox.checked){
+findSetCheckbox.addEventListener("change", function () {
+    if (!findSetCheckbox.checked) {
         findSetButton.classList.add("hide");
     }
-    if(findSetCheckbox.checked){
+    if (findSetCheckbox.checked) {
         findSetButton.classList.remove("hide");
     }
 })
-addCardsCheckbox.addEventListener("change", function (){
-    if(!addCardsCheckbox.checked){
+addCardsCheckbox.addEventListener("change", function () {
+    if (!addCardsCheckbox.checked) {
         addCardsButton.classList.remove("hide");
     }
-    if(addCardsCheckbox.checked){
+    if (addCardsCheckbox.checked) {
         addCardsButton.classList.add("hide");
     }
 })
@@ -529,7 +554,10 @@ function selectCardHandle(event) {
     }
     if (deck.selectedCards.number === 3) {
         const isSet = game.isSet(deck.selectedCards.cards);
-        document.querySelector(".selectPlayer").classList.add("inactivePlayer");
+        if (parseInt(playersNumber.value) > 1) {
+            document.querySelector(".selectPlayer").classList.add("inactivePlayer");
+        }
+
         if (isSet) {
             game.existSelected.player.pointIncreasing();
             deck.dropCardsFromTable(deck.selectedCards.cards);
@@ -538,7 +566,7 @@ function selectCardHandle(event) {
                 game.unselectPlayer(true);
             }
             game.writePlayers();
-            if (deck.cardsOnTable.length <12 || (deck.existSetOnTable().length === 0 && addCardsCheckbox.checked)) {
+            if (deck.cardsOnTable.length < 12 || (deck.existSetOnTable().length === 0 && addCardsCheckbox.checked)) {
                 deck.addCardsToTable();
             }
         } else {
@@ -555,6 +583,17 @@ function selectCardHandle(event) {
             result.innerHTML = "";
         }, 5000);
         stopTimer();
+
+        if(deck.existSetOnTable().length === 0 && deck.remainingCards.length ===0){
+            game.writeScore();
+            const elem = document.createElement("div");
+            elem.classList.add("vege");
+            elem.innerHTML = "A játéknak vége. Eredmények";
+            scoreOutput.insertBefore(elem,scoreOutput.firstChild);
+
+        }else{
+            game.writeScore();
+        }
     }
 }
 
@@ -573,6 +612,7 @@ function startTimer() {
     timer = setInterval(function () {
             timerOutput.innerHTML = `${10 - timeleft}`;
             if (timeleft <= 0) {
+                document.querySelector(".selectPlayer").classList.add("inactivePlayer");
                 clearInterval(timer);
                 game.unselectPlayer();
                 deck.resetSelectedCards();
