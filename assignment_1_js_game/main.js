@@ -173,13 +173,12 @@ const deck = {
         for (let i = 1; i < 4; ++i) {
             for (const shape in shapes) {
                 for (const color in colors) {
-                    if(level.value === "hard"){
+                    if (level.value === "hard") {
                         for (const fill in fills) {
                             const card = new Card(shape, color, i, fill, `${i}${fills[fill].code}${colors[color].code}${shapes[shape].code}`, [i, fills[fill].codeNumb, colors[color].codeNumb, shapes[shape].codeNumb]);
                             this.remainingCards.push(card);
                         }
-                    }
-                    else{
+                    } else {
                         const card = new Card(shape, color, i, "SOLID", `${i}${fills["SOLID"].code}${colors[color].code}${shapes[shape].code}`, [i, fills["SOLID"].codeNumb, colors[color].codeNumb, shapes[shape].codeNumb]);
                         this.remainingCards.push(card);
                     }
@@ -316,6 +315,9 @@ const game = {
 
             playerLine.appendChild(playerColumnName);
             table.appendChild(playerLine)
+            if (parseInt(playersNumber.value) > 1) {
+                this.players[i].unselect();
+            }
         }
         playersContainer.innerHTML = "";
         playersContainer.appendChild(table);
@@ -584,14 +586,14 @@ function selectCardHandle(event) {
         }, 5000);
         stopTimer();
 
-        if(deck.existSetOnTable().length === 0 && deck.remainingCards.length ===0){
+        if (deck.existSetOnTable().length === 0 && deck.remainingCards.length === 0) {
             game.writeScore();
             const elem = document.createElement("div");
             elem.classList.add("vege");
             elem.innerHTML = "A játéknak vége. Eredmények";
-            scoreOutput.insertBefore(elem,scoreOutput.firstChild);
+            scoreOutput.insertBefore(elem, scoreOutput.firstChild);
 
-        }else{
+        } else {
             game.writeScore();
         }
     }
