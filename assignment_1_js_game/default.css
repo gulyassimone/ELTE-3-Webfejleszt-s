@@ -70,3 +70,7 @@ img {
     margin: 4px 2px;
     cursor: pointer;
 }
+.set {
+    height: 15em;
+    border: 5px solid blue;
+}

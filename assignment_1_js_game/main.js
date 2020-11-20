@@ -142,13 +142,14 @@ const deck = {
             this.cardsOnTable.push(temp);
         }
         this.createTable();
+        if (deck.existSetOnTable().length === 0 && addCardsCheckbox.checked) {
+            this.addCardsToTable();
+        }
     },
     createTable: function () {
         tableContainer.innerHTML = "";
         const table = document.createElement('table');
-        console.log(this.cardsOnTable);
         const tdNumber = this.cardsOnTable.length / 3;
-        console.log(tdNumber);
         let sum = 1;
         let row = document.createElement('tr');
         this.cardsOnTable.forEach(function (cardOnTable) {
@@ -215,30 +216,16 @@ const deck = {
      */
     addCardsToTable: function () {
         if (this.remainingCards.length !== 0) {
-            const actualTable = document.querySelectorAll('#table-container td');
-            let newTd = true;
-            for (let i = 0; i < actualTable.length; ++i) {
-                if (actualTable[i].innerHTML === "" && deck.remainingCards.length > 0) {
-                    const temp = this.remainingCards.pop();
-                    this.cardsOnTable.push(temp);
-                    actualTable[i].innerHTML = `<img class="card" src=./icons/${temp.id}.svg alt=${temp.id}>`;
-                    actualTable[i].addEventListener("click", selectCardHandle);
-                    newTd = false;
-                }
+            for (let i = 0; i < 3; i++) {
+                const temp = this.remainingCards.pop();
+                this.cardsOnTable.push(temp);
             }
-            const rows = document.querySelectorAll('#table-container tr');
-            if (newTd) {
-                for (let i = 0; i < rows.length; i++) {
-                    const temp = this.remainingCards.pop();
-                    this.cardsOnTable.push(temp);
-                    const cell = document.createElement('td');
-                    cell.innerHTML = `<img class="card" src=./icons/${temp.id}.svg alt=${temp.id}>`;
-                    cell.firstChild.addEventListener("click", selectCardHandle);
-                    rows[i].appendChild(cell);
-                }
-            }
+            this.createTable();
             if (this.remainingCards.length === 0) {
                 deckContainer.classList.add("hide");
+            }
+            if (deck.existSetOnTable().length === 0 && addCardsCheckbox.checked) {
+                this.addCardsToTable();
             }
         }
     },
@@ -270,10 +257,7 @@ const deck = {
     },
 
     existSetOnTable: function () {
-        console.log(this.cardsOnTable);
         for (let i = 0; i < this.cardsOnTable.length; i++) {
-            console.log("cardOnTable1");
-            console.log(this.cardsOnTable[i]);
             for (let j = 0; j < this.cardsOnTable.length; j++) {
                 for (let k = 0; k < this.cardsOnTable.length; k++) {
                     if (this.cardsOnTable[i].id !== this.cardsOnTable[j].id && this.cardsOnTable[j].id !== this.cardsOnTable[k].id && this.cardsOnTable[i].id !== this.cardsOnTable[k].id) {
@@ -372,30 +356,27 @@ const game = {
         const activePlayer = document.querySelector(".selectPlayer");
         activePlayer.classList.remove("selectPlayer");
     },
-
     /**
-     * when new round start, inactive player set active
+     * storage the selected player
+     * @param player
      */
-    clearInactiveStatus: function () {
-        this.players.forEach(function (player) {
-            player.unselect();
-        })
-        const inactivePlayers = document.querySelectorAll(".inactivePlayer");
-        for (let i = 0; i < inactivePlayers.length; ++i) {
-            inactivePlayers[i].classList.remove(".inactivePlayer");
-        }
-    },
     setExistSelect: function (player) {
         this.existSelected.number = 1;
         this.existSelected.player = player;
         this.existSelected.player.select();
     },
-
+    /**
+     * clear the selected player
+     */
     notExistSelect: function () {
         this.existSelected.number = 0;
         this.existSelected.player = [];
     },
-
+    /**
+     * It tells you that the array containing the specified cards is in SET with each other
+     * @param cards
+     * @returns {boolean}
+     */
     isSet: function (cards) {
         const isSet = [...cards[0].codeNumb];
         for (let j = 0; j < isSet.length; j++) {
@@ -442,12 +423,6 @@ playersNumber.addEventListener("input", function (event) {
     }
 });
 
-delegate(playersInput, "focusout", "input", function (event) {
-    if (event.target.value === "") {
-        event.target.value = `Játékos${event.target.getAttribute("order_number")}`
-    }
-});
-
 gameMode.addEventListener("change", function (event) {
     if (event.target.value === "competitive") {
         specialOptions.classList.add("hide");
@@ -475,9 +450,52 @@ addCardsButton.addEventListener('click', deck.addCardsToTable.bind(deck));
 existSetButton.addEventListener("click", function () {
     const exist = deck.existSetOnTable();
     result.innerHTML = (exist.length !== 0) ? "Van benne SET" : "Nincs benne SET";
-    console.log(exist);
 });
 
+findSetButton.addEventListener("click", function () {
+
+    const cardsOnTable = document.querySelectorAll(".card")
+    const cardsInSet = deck.existSetOnTable();
+    if (cardsInSet) {
+        cardsInSet.forEach(function (card) {
+            for (let i = 0; i < cardsOnTable.length; ++i) {
+                if (card.id === cardsOnTable[i].alt) {
+                    cardsOnTable[i].classList.add("set");
+                }
+            }
+        })
+    }
+});
+existSetCheckbox.addEventListener("change", function (){
+    if(!existSetCheckbox.checked){
+        existSetButton.classList.add("hide");
+    }
+    if(existSetCheckbox.checked){
+        existSetButton.classList.remove("hide");
+    }
+})
+findSetCheckbox.addEventListener("change", function (){
+    if(!findSetCheckbox.checked){
+        findSetButton.classList.add("hide");
+    }
+    if(findSetCheckbox.checked){
+        findSetButton.classList.remove("hide");
+    }
+})
+addCardsCheckbox.addEventListener("change", function (){
+    if(!addCardsCheckbox.checked){
+        addCardsButton.classList.remove("hide");
+    }
+    if(addCardsCheckbox.checked){
+        addCardsButton.classList.add("hide");
+    }
+})
+
+delegate(playersInput, "focusout", "input", function (event) {
+    if (event.target.value === "") {
+        event.target.value = `Játékos${event.target.getAttribute("order_number")}`
+    }
+});
 
 delegate(playersContainer, "click", 'tr td:nth-child(1) button', function (event) {
 
@@ -501,6 +519,7 @@ function selectCardHandle(event) {
 
         let card = deck.cardsOnTable.find(element => element.id === event.target.alt);
         if (!card.selected) {
+            event.target.classList.remove("set");
             event.target.classList.add("selectCard");
             deck.addSelectedCards(card);
         } else {
@@ -510,7 +529,6 @@ function selectCardHandle(event) {
     }
     if (deck.selectedCards.number === 3) {
         const isSet = game.isSet(deck.selectedCards.cards);
-        console.log("beleptem")
         document.querySelector(".selectPlayer").classList.add("inactivePlayer");
         if (isSet) {
             game.existSelected.player.pointIncreasing();
@@ -520,6 +538,9 @@ function selectCardHandle(event) {
                 game.unselectPlayer(true);
             }
             game.writePlayers();
+            if (deck.cardsOnTable.length <12 || (deck.existSetOnTable().length === 0 && addCardsCheckbox.checked)) {
+                deck.addCardsToTable();
+            }
         } else {
             game.existSelected.player.pointDecreasing();
             deck.selectedCards.cards.forEach(elem => elem.back());
