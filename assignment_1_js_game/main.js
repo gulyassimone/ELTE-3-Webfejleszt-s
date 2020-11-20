@@ -238,6 +238,8 @@ const deck = {
                 this.addCardsToTable();
             }
         }
+
+        remainingCardsCountDown.innerHTML = `${deck.remainingCards.length} kártya maradt a pakliban`;
     },
     /**
      * Drop cards from table
@@ -276,6 +278,7 @@ const deck = {
 const game = {
     players: [],
     existSelected: {number: 0, player: null},
+
     /**
      *  When the game starts, this program generates the board based on the general settings
      */
@@ -283,7 +286,6 @@ const game = {
         deck.init();
         this.createPlayers();
         this.writePlayers();
-        this.writeScore();
         if (parseInt(playersNumber.value) === 1) {
             startTimer();
         }
@@ -329,38 +331,53 @@ const game = {
         if (parseInt(playersNumber.value) === 1) {
             document.querySelector("#players td:nth-child(1) button").classList.add("selectPlayer");
             this.setExistSelect(this.players[0]);
+
+            remainingCardsCountDown.innerHTML = `${deck.remainingCards.length} kártya maradt a pakliban`;
         }
-        remainingCardsCountDown.innerHTML = `${deck.remainingCards.length} kártya maradt a pakliban`;
+        this.writeScore();
     },
 
     writeScore: function () {
         const table = document.createElement('table');
+        const playerColumnRankHead = document.createElement('th');
         const playerColumnNameHead = document.createElement('th');
         const playerColumnPointHead = document.createElement('th');
         const playerHeadRow = document.createElement('tr');
 
+        playerColumnRankHead.innerHTML = 'Rank';
         playerColumnNameHead.innerHTML = 'Név';
         playerColumnPointHead.innerHTML = 'Pont';
 
+        playerHeadRow.appendChild(playerColumnRankHead);
         playerHeadRow.appendChild(playerColumnNameHead);
         playerHeadRow.appendChild(playerColumnPointHead);
 
         table.appendChild(playerHeadRow);
-
+        const sortedPlayers = this.players.slice().sort(function(a,b){
+            return b.point - a.point;
+        });
+        const data = [];
         for (let i = 0; i < parseInt(playersNumber.value); ++i) {
             const playerLine = document.createElement('tr');
+            const playerColumnRank = document.createElement('td');
             const playerColumnName = document.createElement('td');
             const playerColumnPoint = document.createElement('td');
 
-            playerColumnName.innerHTML = this.players[i].name;
-            playerColumnPoint.innerHTML = this.players[i].point;
+            playerColumnRank.innerHTML = `${i+1}`;
+            playerColumnName.innerHTML = sortedPlayers[i].name;
+            playerColumnPoint.innerHTML = sortedPlayers[i].point;
 
+            playerLine.appendChild(playerColumnRank);
             playerLine.appendChild(playerColumnName);
             playerLine.appendChild(playerColumnPoint);
-            table.appendChild(playerLine)
+            table.appendChild(playerLine);
+            data.push(`rank${i+1}`, {name: sortedPlayers[i].name, pont: sortedPlayers[i].point});
+            console.log(data);
         }
+        localStorage.setItem("actualGameResult",JSON.stringify(data));
         scoreOutput.innerHTML = "";
         scoreOutput.appendChild(table);
+
     },
 
     /**
@@ -387,6 +404,17 @@ const game = {
         game.notExistSelect();
         const activePlayer = document.querySelector(".selectPlayer");
         activePlayer.classList.remove("selectPlayer");
+
+        let existsActivePlayer = false;
+
+        for(let i = 0; i<game.players.length && !existsActivePlayer ; ++i){
+            if(game.players[i].selected != -1){
+                existsActivePlayer = true;
+            }
+        }
+        if (!existsActivePlayer) {
+            game.writePlayers();
+        }
     },
     /**
      * storage the selected player
@@ -402,7 +430,7 @@ const game = {
      */
     notExistSelect: function () {
         this.existSelected.number = 0;
-        this.existSelected.player = [];
+        this.existSelected.player = null;
     },
     /**
      * It tells you that the array containing the specified cards is in SET with each other
@@ -534,7 +562,7 @@ delegate(playersContainer, "click", 'tr td:nth-child(1) button', function (event
 
     const activePlayer = event.target;
     let player = game.players.find(element => element.name === activePlayer.innerText);
-    if (parseInt(playersNumber.value) > 1 && player.selected === 0) {
+    if (parseInt(playersNumber.value) > 1 && player.selected === 0 && !game.existSelected.player ) {
         game.setExistSelect(player);
         activePlayer.classList.add("selectPlayer");
         startCountDown();
@@ -582,7 +610,6 @@ function selectCardHandle(event) {
             deck.selectedCards.cards.forEach(elem => elem.back());
             deck.resetSelectedCards();
             if (parseInt(playersNumber.value) > 1) {
-                game.existSelected.player.setInactive();
                 game.unselectPlayer(false);
             }
         }
@@ -604,6 +631,7 @@ function selectCardHandle(event) {
         } else {
             game.writeScore();
         }
+        game.writeScore();
     }
 }
 
@@ -626,8 +654,10 @@ function startCountDown() {
             if (timeleft >= 10) {
                 document.querySelector(".selectPlayer").classList.add("inactivePlayer");
                 clearInterval(timer);
+                game.existSelected.player.pointDecreasing();
                 game.unselectPlayer();
                 deck.resetSelectedCards();
+                game.writeScore();
                 timerOutput.innerHTML = "Letelt az idő";
 
                 setTimeout(function () {

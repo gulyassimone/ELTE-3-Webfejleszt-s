@@ -47,7 +47,7 @@ Plusz feladatok (plusz 5 pont)
 
 - [x] A játék nyitólapján a játék nehézsége kiválasztható (3 vagy 4 tulajdonság = 27/81 kártyalap) (0,5 pont)
 - [x] Lehet 4 tulajdonsággal játszani. (1 pont)
-- [ ] A játék eredménye elmentődik a böngészőbe lokálisan. (0,5 pont)
+- [x] A játék eredménye elmentődik a böngészőbe lokálisan. (0,5 pont)
 - [ ] A játék nyitólapján az 1 játékos mód 3 tulajdonságnál játszott top listája megjelenik (0,5 pont)
 - [ ] A játék nyitólapján az 1 játékos mód 4 tulajdonságnál játszott top listája megjelenik (0,5 pont)
 - [ ] A játék nyitólapján az utolsó 10 többjátékos mód eredményei megjelennek. (0,5 pont)
