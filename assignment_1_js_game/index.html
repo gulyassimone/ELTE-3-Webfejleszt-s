@@ -36,21 +36,28 @@
         </div>
     </div>
     <div id="general_options">
-        Játékosok száma:
-        <label for="players_number"></label><input type="number" id="players_number" min="1" max="10" value="1"><br>
-        Játék mód
-        <label for="game_mod"></label><select name="game_mod" id="game_mod">
-            <option value="practice">Gyakorló</option>
-            <option value="competitive">Verseny</option>
-        </select>
+        <label for="players_number">Játékosok száma</label><input type="number" id="players_number" min="1" max="10"
+                                                                  value="1"><br>
+        <div id="players_input">
+            <label for="players_input_1">1. játékos: </label>
+            <input id="players_input_1" type="text" max="50" min="1" value="Játékos1" order_number=1>
+        </div>
+        <label for="game_mod">Játék Mód: </label><select name="game_mod" id="game_mod">
+        <option value="practice">Gyakorló</option>
+        <option value="competitive">Verseny</option>
+    </select>
         <div id="special_options">
             <b>Egyéb beállítások</b><br>
             Van benne SET? gomb
-            <label for="exist_set_checkbox"></label><input type="checkbox" id="exist_set_checkbox" name="exist_set_checkbox" value="Van benne SET? gomb"><br>
+            <label for="exist_set_checkbox"></label><input type="checkbox" id="exist_set_checkbox"
+                                                           name="exist_set_checkbox" value="Van benne SET? gomb"><br>
             SET mutatása gomb
-            <label for="find_set_checkbox"></label><input type="checkbox" id="find_set_checkbox" name="find_set_checkout" value="SET mutatása gomb"><br>
+            <label for="find_set_checkbox"></label><input type="checkbox" id="find_set_checkbox"
+                                                          name="find_set_checkout" value="SET mutatása gomb"><br>
             Plusz 3 lap automatikus kiosztás
-            <label for="add_cards_checkbox"></label><input type="checkbox" id="add_cards_checkbox" name="add_cards_checkbox" value="Plusz 3 lap automatikus kiosztása"
+            <label for="add_cards_checkbox"></label><input type="checkbox" id="add_cards_checkbox"
+                                                           name="add_cards_checkbox"
+                                                           value="Plusz 3 lap automatikus kiosztása"
                                                            checked><br>
         </div>
     </div>
@@ -67,7 +74,7 @@
         <dix id="players"></dix>
         <dix id="score"></dix>
         <div id="table-container"></div>
-        <div id = "deck"><img src=./icons/back.svg alt="deck"/></div>
+        <div id="deck"><img src=./icons/back.svg alt="deck"/></div>
     </div>
 </div>
 <script src="main.js"></script>

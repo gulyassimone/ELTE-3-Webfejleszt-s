@@ -15,6 +15,7 @@ const findSetButton = document.querySelector("#find_set_button");
 const addCardsButton = document.querySelector("#add_cards_button");
 const result = document.querySelector("#result");
 const deckContainer = document.querySelector("#deck");
+const playersInput = document.querySelector("#players_input");
 
 const shapes = {
     DIAMOND: {codeNumb: 1, english: "diamond", code: 'D'},
@@ -72,6 +73,7 @@ class Player {
 
 class Card {
     constructor(shape, color, number, fill, id, codeNumb) {
+        this._selected = 0;
         this._shape = shape;
         this._color = color;
         this._number = number;
@@ -96,6 +98,18 @@ class Card {
         return this._fill;
     }
 
+    get selected() {
+        return this._selected;
+    }
+
+    select() {
+        this._selected = 1;
+    }
+
+    back() {
+        this._selected = 0;
+    }
+
     get id() {
         return this._id;
     }
@@ -104,6 +118,7 @@ class Card {
         console.log(`id = ${this._id} number = ${this._number} form = ${this._shape} color = ${this._color} fill = ${this._fill} selected = ${this._selected}`);
     }
 }
+
 const deck = {
     remainingCards: [],
     cardsOnTable: [],
@@ -126,7 +141,7 @@ const deck = {
         tableContainer.innerHTML = "";
         const table = document.createElement('table');
         console.log(this.cardsOnTable);
-        const tdNumber = this.cardsOnTable.length/3;
+        const tdNumber = this.cardsOnTable.length / 3;
         console.log(tdNumber);
         let sum = 1;
         let row = document.createElement('tr');
@@ -178,8 +193,7 @@ const deck = {
      * @param card
      */
     removeSelectedCards: function (card) {
-        this.selectedCards.cards = arrayRemove(this.selectedCards.cards , card);
-        this.selectedCards.cards.forEach(element => console.log(element + " "));
+        this.selectedCards.cards = arrayRemove(this.selectedCards.cards, card);
         this.selectedCards.number -= 1;
     },
     resetSelectedCards: function () {
@@ -191,8 +205,8 @@ const deck = {
     /**
      * add 3 cards to table
      */
-    addCardsToTable: function() {
-        if(this.remainingCards.length !== 0 ) {
+    addCardsToTable: function () {
+        if (this.remainingCards.length !== 0) {
             const actualTable = document.querySelectorAll('#table-container td');
             let newTd = true;
             for (let i = 0; i < actualTable.length; ++i) {
@@ -236,25 +250,25 @@ const deck = {
         }
         this.createTable();
 
-        const existSet=(this.existSetOnTable()===[]);
-        if ((this.cardsOnTable.length < 12 || existSet) && this.remainingCards.length > 0 && gameMode.value === "competitive" ) {
+        const existSet = (this.existSetOnTable() === []);
+        if ((this.cardsOnTable.length < 12 || existSet) && this.remainingCards.length > 0 && gameMode.value === "competitive") {
             setTimeout(function () {
                 deck.addCardsToTable();
             }, 2000);
         }
-        if(existSet && this.remainingCards.length === 0 ){
+        if (existSet && this.remainingCards.length === 0) {
             result.innerHTML = "A játék befejeződött!";
         }
     },
 
     existSetOnTable: function () {
         console.log(this.cardsOnTable);
-        for (let i = 0; i< this.cardsOnTable.length; i++) {
+        for (let i = 0; i < this.cardsOnTable.length; i++) {
             console.log("cardOnTable1");
             console.log(this.cardsOnTable[i]);
-            for (let j= 0; j< this.cardsOnTable.length; j++) {
-                for (let k = 0; k< this.cardsOnTable.length; k++) {
-                    if (this.cardsOnTable[i].id !== this.cardsOnTable[j].id && this.cardsOnTable[j].id !== this.cardsOnTable[k].id &&this.cardsOnTable[i].id !== this.cardsOnTable[k].id) {
+            for (let j = 0; j < this.cardsOnTable.length; j++) {
+                for (let k = 0; k < this.cardsOnTable.length; k++) {
+                    if (this.cardsOnTable[i].id !== this.cardsOnTable[j].id && this.cardsOnTable[j].id !== this.cardsOnTable[k].id && this.cardsOnTable[i].id !== this.cardsOnTable[k].id) {
                         const temp = [this.cardsOnTable[i], this.cardsOnTable[j], this.cardsOnTable[k]];
                         if (game.isSet(temp)) {
                             return temp;
@@ -286,8 +300,12 @@ const game = {
     },
 
     createPlayers: function () {
-        for (let i = 1; i <= playersNumber.value; ++i) {
-            this.players.push(new Player(`Player${i}`));
+        const playersFromPage = document.querySelectorAll("#players_input input");
+        console.log(playersFromPage)
+        for (let i = 0; i < playersFromPage.length; ++i) {
+            console.log("..")
+            console.log(playersFromPage[i].value)
+            this.players.push(new Player(playersFromPage[i].value));
         }
     },
     writePlayers: function () {
@@ -352,14 +370,17 @@ const game = {
 showRules.addEventListener("click", function () {
     rules.style.display = "block";
 });
+
 window.addEventListener("click", function (event) {
     if (event.target === rules) {
         rules.style.display = "none";
     }
 });
+
 rules.addEventListener("click", function () {
     rules.style.display = "none";
 });
+
 document.addEventListener("click", function (event) {
     if (event.target.matches(".close")) {
         event.target.closest(".modal").style.display = "none";
@@ -369,6 +390,19 @@ document.addEventListener("click", function (event) {
 
 playersNumber.addEventListener("keypress", function (event) {
     event.preventDefault();
+});
+
+playersNumber.addEventListener("input", function (event) {
+    playersInput.innerHTML = "";
+    for (let i = 1; i <= parseInt(event.target.value); ++i) {
+        playersInput.innerHTML += `<label for="players_input_${i}">${i}. játékos: </label><input id="players_input_${i}" type="text" max="50" min="1" value="Játékos${i}" order_number = ${i}><br>`;
+    }
+});
+
+delegate(playersInput, "focusout", "input", function (event) {
+    if (event.target.value === "") {
+        event.target.value = `Játékos${event.target.getAttribute("order_number")}`
+    }
 });
 
 gameMode.addEventListener("change", function (event) {
@@ -397,10 +431,9 @@ play.addEventListener("click", function () {
 addCardsButton.addEventListener('click', deck.addCardsToTable.bind(deck));
 existSetButton.addEventListener("click", function () {
     const exist = deck.existSetOnTable();
-    result.innerHTML = (exist !== []) ? "Van benne SET" : "Nincs benne SET";
+    result.innerHTML = (exist.length !== 0) ? "Van benne SET" : "Nincs benne SET";
     console.log(exist);
 });
-
 
 delegate(playersContainer, "click", 'tr td:nth-child(1) button', function (event) {
     const activePlayer = event.target;
@@ -429,9 +462,11 @@ function selectCardHandle(event) {
         if (!card.selected) {
             event.target.classList.add("selectCard");
             deck.addSelectedCards(card);
+            card.select();
         } else {
             event.target.classList.remove("selectCard");
             deck.removeSelectedCards(card);
+            card.back();
         }
     }
     if (deck.selectedCards.number === 3) {
