@@ -16,6 +16,7 @@ const addCardsButton = document.querySelector("#add_cards_button");
 const result = document.querySelector("#result");
 const deckContainer = document.querySelector("#deck");
 const playersInput = document.querySelector("#players_input");
+const timerOutput = document.querySelector("#timer");
 
 const shapes = {
     DIAMOND: {codeNumb: 1, english: "diamond", code: 'D'},
@@ -54,7 +55,7 @@ class Player {
         return this._selected;
     }
 
-    setSelected() {
+    select() {
         this._selected = 1;
     }
 
@@ -187,6 +188,7 @@ const deck = {
     addSelectedCards: function (card) {
         this.selectedCards.cards.push(card);
         this.selectedCards.number += 1;
+        card.select();
     },
     /**
      *
@@ -195,6 +197,7 @@ const deck = {
     removeSelectedCards: function (card) {
         this.selectedCards.cards = arrayRemove(this.selectedCards.cards, card);
         this.selectedCards.number -= 1;
+        card.back();
     },
     resetSelectedCards: function () {
         this.selectedCards.cards = [];
@@ -288,11 +291,14 @@ const game = {
     setExistSelect: function (player) {
         this.existSelected.number = 1;
         this.existSelected.player = player;
+        this.existSelected.player.select();
     },
+
     notExistSelect: function () {
         this.existSelected.number = 0;
         this.existSelected.player = [];
     },
+
     init: function () {
         deck.init();
         this.createPlayers();
@@ -301,13 +307,11 @@ const game = {
 
     createPlayers: function () {
         const playersFromPage = document.querySelectorAll("#players_input input");
-        console.log(playersFromPage)
         for (let i = 0; i < playersFromPage.length; ++i) {
-            console.log("..")
-            console.log(playersFromPage[i].value)
             this.players.push(new Player(playersFromPage[i].value));
         }
     },
+
     writePlayers: function () {
         const table = document.createElement('table');
         const playerColumnNameHead = document.createElement('th');
@@ -322,7 +326,7 @@ const game = {
 
         table.appendChild(playerHeadRow);
 
-        for (let i = 0; i < playersNumber.value; ++i) {
+        for (let i = 0; i < parseInt(playersNumber.value); ++i) {
             const playerLine = document.createElement('tr');
             const playerColumnName = document.createElement('td');
             const playerColumnPoint = document.createElement('td');
@@ -336,6 +340,11 @@ const game = {
         }
         playersContainer.innerHTML = "";
         playersContainer.appendChild(table);
+
+        if (parseInt(playersNumber.value) === 1) {
+            document.querySelector("#players td:nth-child(1) button").classList.add("selectPlayer");
+            this.setExistSelect(this.players[0]);
+        }
     },
     /**
      * This function unselect the selected player.
@@ -436,16 +445,28 @@ existSetButton.addEventListener("click", function () {
 });
 
 delegate(playersContainer, "click", 'tr td:nth-child(1) button', function (event) {
-    const activePlayer = event.target;
-    let player = game.players.find(element => element.name === activePlayer.innerText);
+    if (parseInt(playersNumber.value) > 1) {
+        const activePlayer = event.target;
+        let player = game.players.find(element => element.name === activePlayer.innerText);
 
-    if (!game.existSelected.number) {
-        player.setSelected();
-        game.setExistSelect(player);
-        activePlayer.classList.add("selectPlayer");
-    } else if (player.selected && deck.selectedCards.number < 3) {
-        game.unselectPlayer();
-        deck.resetSelectedCards();
+        if (!game.existSelected.number) {
+            game.setExistSelect(player);
+            activePlayer.classList.add("selectPlayer");
+        }
+
+        let timeleft = 10;
+        const timer = setInterval(function () {
+            if (timeleft <= 0) {
+                clearInterval(timer);
+            }
+            timerOutput.value = 10 - timeleft;
+            timeleft -= 1;
+        }, 1000);
+        if(timeleft = 0) {
+            game.unselectPlayer();
+            deck.resetSelectedCards();
+        }
+
     }
 });
 
@@ -462,11 +483,9 @@ function selectCardHandle(event) {
         if (!card.selected) {
             event.target.classList.add("selectCard");
             deck.addSelectedCards(card);
-            card.select();
         } else {
             event.target.classList.remove("selectCard");
             deck.removeSelectedCards(card);
-            card.back();
         }
     }
     if (deck.selectedCards.number === 3) {
@@ -475,13 +494,17 @@ function selectCardHandle(event) {
             game.existSelected.player.pointIncreasing();
             deck.dropCardsFromTable(deck.selectedCards.cards);
             deck.resetSelectedCards();
-            game.unselectPlayer();
+            if (parseInt(playersNumber.value) > 1) {
+                game.unselectPlayer();
+            }
             game.writePlayers();
         } else {
             game.existSelected.player.pointDecreasing();
             deck.selectedCards.cards.forEach(elem => elem.back());
             deck.resetSelectedCards();
-            game.unselectPlayer();
+            if (parseInt(playersNumber.value) > 1) {
+                game.unselectPlayer();
+            }
             game.writePlayers();
         }
         result.innerHTML = isSet ? "Set" : "Nem Set";
