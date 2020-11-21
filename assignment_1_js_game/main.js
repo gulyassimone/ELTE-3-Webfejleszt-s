@@ -21,6 +21,8 @@ const playersInput = document.querySelector("#players_input");
 const timerOutput = document.querySelector("#timer");
 const scoreOutput = document.querySelector("#score");
 const remainingCardsCountDown = document.querySelector("#remainingCards");
+const top10normalDiv = document.querySelector("#top10normal");
+const top10hardDiv = document.querySelector("#top10hard");
 let timer = 0;
 
 const shapes = {
@@ -132,7 +134,7 @@ class Card {
 const deck = {
     remainingCards: [],
     cardsOnTable: [],
-    selectedCards: {number: 0, cards: []},
+    selectedCards: [],
 
     init: function () {
         this.generateDeck();
@@ -202,8 +204,7 @@ const deck = {
         tableContainer.innerHTML = "";
     },
     addSelectedCards: function (card) {
-        this.selectedCards.cards.push(card);
-        this.selectedCards.number += 1;
+        this.selectedCards.push(card);
         card.select();
     },
     /**
@@ -211,13 +212,11 @@ const deck = {
      * @param card
      */
     removeSelectedCards: function (card) {
-        this.selectedCards.cards = arrayRemove(this.selectedCards.cards, card);
-        this.selectedCards.number -= 1;
+        this.selectedCards = arrayRemove(this.selectedCards, card);
         card.back();
     },
     resetSelectedCards: function () {
-        this.selectedCards.cards = [];
-        this.selectedCards.number = 0;
+        this.selectedCards = [];
         let temp = document.querySelectorAll(".card");
         temp.forEach(elem => elem.classList.remove("selectCard"));
     },
@@ -338,43 +337,19 @@ const game = {
     },
 
     writeScore: function () {
-        const table = document.createElement('table');
-        const playerColumnRankHead = document.createElement('th');
-        const playerColumnNameHead = document.createElement('th');
-        const playerColumnPointHead = document.createElement('th');
-        const playerHeadRow = document.createElement('tr');
-
-        playerColumnRankHead.innerHTML = 'Rank';
-        playerColumnNameHead.innerHTML = 'Név';
-        playerColumnPointHead.innerHTML = 'Pont';
-
-        playerHeadRow.appendChild(playerColumnRankHead);
-        playerHeadRow.appendChild(playerColumnNameHead);
-        playerHeadRow.appendChild(playerColumnPointHead);
-
-        table.appendChild(playerHeadRow);
-        const sortedPlayers = this.players.slice().sort(function(a,b){
+        const sortedPlayers = this.players.slice().sort(function (a, b) {
             return b.point - a.point;
         });
+
+        const table = createScoreBoard(sortedPlayers, 'Aktuális pontszám');
+
         const data = [];
-        for (let i = 0; i < parseInt(playersNumber.value); ++i) {
-            const playerLine = document.createElement('tr');
-            const playerColumnRank = document.createElement('td');
-            const playerColumnName = document.createElement('td');
-            const playerColumnPoint = document.createElement('td');
 
-            playerColumnRank.innerHTML = `${i+1}`;
-            playerColumnName.innerHTML = sortedPlayers[i].name;
-            playerColumnPoint.innerHTML = sortedPlayers[i].point;
+        for(let i = 0; i < sortedPlayers.length; ++i){
+            data.push(new Array(sortedPlayers[i].name,sortedPlayers[i].point));
+        };
 
-            playerLine.appendChild(playerColumnRank);
-            playerLine.appendChild(playerColumnName);
-            playerLine.appendChild(playerColumnPoint);
-            table.appendChild(playerLine);
-            data.push(`rank${i+1}`, {name: sortedPlayers[i].name, pont: sortedPlayers[i].point});
-            console.log(data);
-        }
-        localStorage.setItem("actualGameResult",JSON.stringify(data));
+        localStorage.setItem("actualGameResult", JSON.stringify(data));
         scoreOutput.innerHTML = "";
         scoreOutput.appendChild(table);
 
@@ -407,8 +382,8 @@ const game = {
 
         let existsActivePlayer = false;
 
-        for(let i = 0; i<game.players.length && !existsActivePlayer ; ++i){
-            if(game.players[i].selected != -1){
+        for (let i = 0; i < game.players.length && !existsActivePlayer; ++i) {
+            if (game.players[i].selected != -1) {
                 existsActivePlayer = true;
             }
         }
@@ -437,7 +412,7 @@ const game = {
      * @param cards
      * @returns {boolean}
      */
-    isSet: function (cards) {
+    isSet: function(cards) {
         const isSet = [...cards[0].codeNumb];
         for (let j = 0; j < isSet.length; j++) {
             for (let i = 1; i < 3; i++) {
@@ -562,7 +537,7 @@ delegate(playersContainer, "click", 'tr td:nth-child(1) button', function (event
 
     const activePlayer = event.target;
     let player = game.players.find(element => element.name === activePlayer.innerText);
-    if (parseInt(playersNumber.value) > 1 && player.selected === 0 && !game.existSelected.player ) {
+    if (parseInt(playersNumber.value) > 1 && player.selected === 0 && !game.existSelected.player) {
         game.setExistSelect(player);
         activePlayer.classList.add("selectPlayer");
         startCountDown();
@@ -576,7 +551,7 @@ function arrayRemove(array, value) {
 }
 
 function selectCardHandle(event) {
-    if (deck.selectedCards.number < 3 && game.existSelected.number) {
+    if (deck.selectedCards.length < 3 && game.existSelected.number) {
 
         let card = deck.cardsOnTable.find(element => element.id === event.target.alt);
         if (!card.selected) {
@@ -588,15 +563,16 @@ function selectCardHandle(event) {
             deck.removeSelectedCards(card);
         }
     }
-    if (deck.selectedCards.number === 3) {
-        const isSet = game.isSet(deck.selectedCards.cards);
+
+    if (deck.selectedCards.length === 3) {
+        const isSet = game.isSet(deck.selectedCards);
         if (parseInt(playersNumber.value) > 1) {
             document.querySelector(".selectPlayer").classList.add("inactivePlayer");
         }
 
         if (isSet) {
             game.existSelected.player.pointIncreasing();
-            deck.dropCardsFromTable(deck.selectedCards.cards);
+            deck.dropCardsFromTable(deck.selectedCards);
             deck.resetSelectedCards();
             if (parseInt(playersNumber.value) > 1) {
                 game.unselectPlayer(true);
@@ -607,7 +583,7 @@ function selectCardHandle(event) {
             }
         } else {
             game.existSelected.player.pointDecreasing();
-            deck.selectedCards.cards.forEach(elem => elem.back());
+            deck.selectedCards.forEach(elem => elem.back());
             deck.resetSelectedCards();
             if (parseInt(playersNumber.value) > 1) {
                 game.unselectPlayer(false);
@@ -628,6 +604,8 @@ function selectCardHandle(event) {
             elem.innerHTML = "A játéknak vége. Eredmények";
             scoreOutput.insertBefore(elem, scoreOutput.firstChild);
 
+            storeData();
+
         } else {
             game.writeScore();
         }
@@ -643,6 +621,8 @@ function delegate(parent, type, selector, handler) {
         }
     })
 }
+
+
 
 /**
  *
@@ -686,3 +666,81 @@ function stopTimer() {
         timerOutput.innerHTML = "";
     }, 1000);
 }
+
+/**
+ *
+ * @param data
+ */
+function storeData() {
+    const existsNormal = JSON.parse(localStorage.getItem('top10normal'));
+    const existsHard = JSON.parse(localStorage.getItem('top10hard'));
+    const actualGame = JSON.parse(localStorage.getItem('actualGameResult'));
+    if (level.value === "normal") {
+        const data = existsNormal===null ? actualGame : top10Score(actualGame, existsNormal);
+        localStorage.setItem("top10normal",JSON.stringify(data));
+    } else {
+        const data = existsHard ? actualGame : top10Score(actualGame, existsHard);
+        localStorage.setItem("top10hard",JSON.stringify(data));
+    }
+}
+
+function top10Score(actualGame, normalData) {
+    for(let i = 0; i < actualGame.length; ++i){
+        let store = false;
+        for(let j = 0; j < normalData.length; ++j){
+            if(actualGame[i][0]===normalData[j][0]){
+                store = true;
+                normalData[j][1] += actualGame[i][1];
+            }
+        }
+        if(!store){
+            normalData.push(actualGame[i]);
+        }
+    }
+    return normalData;
+}
+/*
+top10normalDiv ;
+top10hardDiv;*/
+
+//const top10normalData = JSON.parse(localStorage.getItem("top10normal"));
+
+
+function createScoreBoard(data, name) {
+    const caption = document.createElement('caption');
+    caption.innerHTML = name;
+    const table = document.createElement('table');
+    const playerColumnRankHead = document.createElement('th');
+    const playerColumnNameHead = document.createElement('th');
+    const playerColumnPointHead = document.createElement('th');
+    const playerHeadRow = document.createElement('tr');
+
+    playerColumnRankHead.innerHTML = 'Rank';
+    playerColumnNameHead.innerHTML = 'Név';
+    playerColumnPointHead.innerHTML = 'Pont';
+
+    playerHeadRow.appendChild(playerColumnRankHead);
+    playerHeadRow.appendChild(playerColumnNameHead);
+    playerHeadRow.appendChild(playerColumnPointHead);
+
+    table.appendChild(caption);
+    table.appendChild(playerHeadRow);
+
+    for (let i = 0; i < data.length; ++i) {
+        const playerLine = document.createElement('tr');
+        const playerColumnRank = document.createElement('td');
+        const playerColumnName = document.createElement('td');
+        const playerColumnPoint = document.createElement('td');
+
+        playerColumnRank.innerHTML = `${i + 1}`;
+        playerColumnName.innerHTML = data[i].name;
+        playerColumnPoint.innerHTML = data[i].point;
+
+        playerLine.appendChild(playerColumnRank);
+        playerLine.appendChild(playerColumnName);
+        playerLine.appendChild(playerColumnPoint);
+        table.appendChild(playerLine);
+    }
+    return table;
+}
+
