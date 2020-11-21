@@ -24,6 +24,7 @@ const top10normalDiv = document.querySelector("#top10normal1");
 const top10hardDiv = document.querySelector("#top10hard1");
 const top10moreDiv = document.querySelector("#top10more");
 const summaryScoreDiv = document.querySelector("#summaryScore");
+const endDiv = document.querySelector("#end");
 
 let top10normalDivData = JSON.parse(localStorage.getItem("top10normal1"));
 let top10hardDivData = JSON.parse(localStorage.getItem("top10hard1"));
@@ -144,10 +145,7 @@ const deck = {
 
     init: function () {
         this.generateDeck();
-        /**
-         * @todo delete comment
-         */
-        //this.remainingCards.forEach(element => element.writeToConsole());
+        this.remainingCards.forEach(element => element.writeToConsole());
         this.shuffle();
         for (let i = 0; i < 12; i++) {
             const temp = this.remainingCards.pop();
@@ -291,7 +289,7 @@ const game = {
         deck.init();
         this.createPlayers();
         this.writePlayers();
-        if (parseInt(playersNumber.value) === 1) {
+        if (parseInt(playersNumber.value) === 1 && gameMode.value === "competitive") {
             startTimer();
         }
     },
@@ -359,14 +357,15 @@ const game = {
         const lastData = lastGameResult===null ? data : top10Score(data, lastGameResult);
 
         localStorage.setItem("actualGameResult", JSON.stringify(data));
-        localStorage.setItem("lastGameResult", JSON.stringify(lastData))
 
         const table2 = createScoreBoard(lastData, 'Összesített pontszám');
 
         scoreOutput.innerHTML = "";
         scoreOutput.appendChild(table);
-        summaryScoreDiv.innerHTML = "";
-        summaryScoreDiv.appendChild(table2);
+        if(parseInt(playersNumber.value) >1){
+            summaryScoreDiv.innerHTML = "";
+            summaryScoreDiv.appendChild(table2);
+        }
 
     },
 
@@ -615,15 +614,18 @@ function selectCardHandle(event) {
         if (deck.existSetOnTable().length === 0 && deck.remainingCards.length === 0) {
             gameStatus = 0;
             game.writeScore();
-            const elem = document.createElement("div");
-            elem.classList.add("vege");
-            elem.innerHTML = "A játéknak vége. Eredmények";
-            scoreOutput.insertBefore(elem, scoreOutput.firstChild);
+            endDiv.innerHTML = "A játéknak vége. Eredmények";
             storeData();
             stopTimer();
             if(parseInt(playersNumber.value)>1){
-                elem.innerHTML = `Akartok újra együtt játszani? <button id = "again" type = button class = "smallbutton" value="yes">Yes</button> <button id = "close" type = button class = "smallbutton" value="no">No</button>`;
-                document.querySelector("#again").addEventListener("click", function (){game.init();});
+                endDiv.innerHTML = `Akartok újra együtt játszani? <button id = "again" type = button class = "box smallbutton" value="yes">Yes</button> <button id = "close" type = button class = "smallbutton" value="no">No</button>`;
+                document.querySelector("#again").addEventListener("click", function (){
+                    const actualGameResult = JSON.parse(localStorage.getItem("actualGameResult"));
+                    const lastGameResult = JSON.parse(localStorage.getItem("lastGameResult"));
+                    const lastData = lastGameResult===null ? actualGameResult : top10Score(actualGameResult, lastGameResult);
+                    localStorage.setItem("lastGameResult", JSON.stringify(lastData))
+                    game.init();
+                });
                 document.querySelector("#close").addEventListener("click", function (){
                     stopCountDown();
                     event.target.closest(".modal").style.display = "none";

@@ -5,13 +5,14 @@
     <meta charset="UTF-8">
     <title>SET Játék</title>
     <link href='https://fonts.googleapis.com/css?family=Amatic SC' rel='stylesheet'>
+
 </head>
 <body>
 
-<div id="menu" class="inline">
+<div id="menu" class = "inline">
     <b><h1>SET játék</h1></b><br>
     <button id="show_rules" class="box btn-red">Játék szabályzat</button>
-        <button id="play" type="button" class="box btn-green start">Start</button>
+    <button id="play" type="button" class="box btn-green start">Start</button>
     <div id="rules" class="modal">
         <div class="modal-content">
             <div><span class="close">&times;</span></div>
@@ -64,7 +65,7 @@
         </div>
     </div>
 </div>
-<div class="inline right">
+<div class = "inline">
     <div id="special_options">
         <h2>Egyéb beállítások</h2><br>
         Van benne SET? gomb
@@ -95,20 +96,23 @@
                 <button id="find_set_button" type="button" class="hide  box btn-red ">SET mutatása</button>
                 <button id="add_cards_button" type="button" class="hide box btn-red ">Plusz 3 lap
                 </button>
-                <div id="result" class = "inline box"></div>
+                <div id="result" class="inline"></div>
+                <div id="end" class="inline end"></div>
             </div>
             <div id="timer"></div>
             <div id="exist_set_answer"></div>
-            <div id="players" class="inline"></div>
-            <div id="table-container" class=" inline"></div>
-            <div class="inline right relative">
-                <div class="inline left">
-                    <img id="deck" src=./icons/back.svg alt="deck"/>
-                    <div id="remainingCards"></div>
-                </div>
-                <div>
-                    <div id="score" class="inline right"></div>
-                    <div id="summaryScore" class="inline right"></div>
+            <div class="wrapper">
+                <div id="players"></div>
+                <div id="table-container"></div>
+                <div >
+                    <div>
+                        <img id="deck" src=./icons/back.svg alt="deck"/>
+                        <div id="remainingCards"></div>
+                    </div>
+                    <div>
+                        <div id="score"></div>
+                        <div id="summaryScore"></div>
+                    </div>
                 </div>
             </div>
         </div>
