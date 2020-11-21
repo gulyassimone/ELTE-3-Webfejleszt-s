@@ -1,5 +1,4 @@
 const gameDiv = document.querySelector("#game");
-const modalContent = document.querySelector("#game .modal-content");
 const playersNumber = document.querySelector("#players_number");
 const gameMode = document.querySelector("#game_mod");
 const specialOptions = document.querySelector("#special_options");
@@ -21,9 +20,15 @@ const playersInput = document.querySelector("#players_input");
 const timerOutput = document.querySelector("#timer");
 const scoreOutput = document.querySelector("#score");
 const remainingCardsCountDown = document.querySelector("#remainingCards");
-const top10normalDiv = document.querySelector("#top10normal");
-const top10hardDiv = document.querySelector("#top10hard");
+const top10normalDiv = document.querySelector("#top10normal1");
+const top10hardDiv = document.querySelector("#top10hard1");
+const top10moreDiv = document.querySelector("#top10more");
+
+let top10normalDivData = JSON.parse(localStorage.getItem("top10normal1"));
+let top10hardDivData = JSON.parse(localStorage.getItem("top10hard1"));
+let top10moreData = JSON.parse(localStorage.getItem("top10more"));
 let timer = 0;
+let gameStatus=null;
 
 const shapes = {
     DIAMOND: {codeNumb: 1, english: "diamond", code: 'D'},
@@ -237,7 +242,6 @@ const deck = {
                 this.addCardsToTable();
             }
         }
-
         remainingCardsCountDown.innerHTML = `${deck.remainingCards.length} kártya maradt a pakliban`;
     },
     /**
@@ -282,6 +286,7 @@ const game = {
      *  When the game starts, this program generates the board based on the general settings
      */
     init: function () {
+        gameStatus = 1;
         deck.init();
         this.createPlayers();
         this.writePlayers();
@@ -316,7 +321,7 @@ const game = {
             const playerLine = document.createElement('tr');
             const playerColumnName = document.createElement('td');
 
-            playerColumnName.innerHTML = `<button type = button>${this.players[i].name}</button>`;
+            playerColumnName.innerHTML = `<button type = button class ="box btn-blue">${this.players[i].name}</button>`;
 
             playerLine.appendChild(playerColumnName);
             table.appendChild(playerLine)
@@ -345,8 +350,8 @@ const game = {
 
         const data = [];
 
-        for(let i = 0; i < sortedPlayers.length; ++i){
-            data.push(new Array(sortedPlayers[i].name,sortedPlayers[i].point));
+        for (let i = 0; i < sortedPlayers.length; ++i) {
+            data.push({name: sortedPlayers[i].name, point: sortedPlayers[i].point});
         };
 
         localStorage.setItem("actualGameResult", JSON.stringify(data));
@@ -383,7 +388,7 @@ const game = {
         let existsActivePlayer = false;
 
         for (let i = 0; i < game.players.length && !existsActivePlayer; ++i) {
-            if (game.players[i].selected != -1) {
+            if (game.players[i].selected !== -1) {
                 existsActivePlayer = true;
             }
         }
@@ -412,7 +417,7 @@ const game = {
      * @param cards
      * @returns {boolean}
      */
-    isSet: function(cards) {
+    isSet: function (cards) {
         const isSet = [...cards[0].codeNumb];
         for (let j = 0; j < isSet.length; j++) {
             for (let i = 1; i < 3; i++) {
@@ -442,7 +447,7 @@ rules.addEventListener("click", function () {
 
 document.addEventListener("click", function (event) {
     if (event.target.matches(".close")) {
-        stopTimer();
+        sstartCountDown();
         event.target.closest(".modal").style.display = "none";
         game.reset();
     }
@@ -537,7 +542,7 @@ delegate(playersContainer, "click", 'tr td:nth-child(1) button', function (event
 
     const activePlayer = event.target;
     let player = game.players.find(element => element.name === activePlayer.innerText);
-    if (parseInt(playersNumber.value) > 1 && player.selected === 0 && !game.existSelected.player) {
+    if (parseInt(playersNumber.value) > 1 && player.selected === 0 && !game.existSelected.player && gameStatus) {
         game.setExistSelect(player);
         activePlayer.classList.add("selectPlayer");
         startCountDown();
@@ -551,7 +556,7 @@ function arrayRemove(array, value) {
 }
 
 function selectCardHandle(event) {
-    if (deck.selectedCards.length < 3 && game.existSelected.number) {
+    if (deck.selectedCards.length < 3 && game.existSelected.number && gameStatus) {
 
         let card = deck.cardsOnTable.find(element => element.id === event.target.alt);
         if (!card.selected) {
@@ -566,7 +571,7 @@ function selectCardHandle(event) {
 
     if (deck.selectedCards.length === 3) {
         const isSet = game.isSet(deck.selectedCards);
-        if (parseInt(playersNumber.value) > 1) {
+        if (parseInt(playersNumber.value) > 1 && gameStatus) {
             document.querySelector(".selectPlayer").classList.add("inactivePlayer");
         }
 
@@ -589,27 +594,26 @@ function selectCardHandle(event) {
                 game.unselectPlayer(false);
             }
         }
-        result.innerHTML = isSet ? "Set" : "Nem Set";
+        result.innerHTML = isSet ? "Hurrá, egy Set" : "Sajnos ez Nem Set";
         setTimeout(function () {
             result.innerHTML = "";
         }, 5000);
         if (parseInt(playersNumber.value) > 1) {
-            stopTimer();
+            sstartCountDown();
         }
 
         if (deck.existSetOnTable().length === 0 && deck.remainingCards.length === 0) {
+            gameStatus = 0;
             game.writeScore();
             const elem = document.createElement("div");
             elem.classList.add("vege");
             elem.innerHTML = "A játéknak vége. Eredmények";
             scoreOutput.insertBefore(elem, scoreOutput.firstChild);
-
             storeData();
-
+            stopTimer();
         } else {
             game.writeScore();
         }
-        game.writeScore();
     }
 }
 
@@ -621,7 +625,6 @@ function delegate(parent, type, selector, handler) {
         }
     })
 }
-
 
 
 /**
@@ -660,50 +663,76 @@ function startTimer() {
     );
 }
 
-function stopTimer() {
+function sstartCountDown() {
     clearTimeout(timer);
     setTimeout(function () {
         timerOutput.innerHTML = "";
     }, 1000);
 }
+function stopTimer() {
+    clearTimeout(timer);
+}
 
-/**
- *
- * @param data
- */
+top10normalDiv.appendChild(createScoreBoard(top10normalDivData ? top10normalDivData : [{name: "Nincs adat", point: "Nincs adat"}], "TOP 10 Egy játékos mód [KÖNNYŰ]"));
+top10hardDiv.appendChild(createScoreBoard(top10hardDivData ? top10hardDivData: [{name: "Nincs adat", point: "Nincs adat"}], "TOP 10 Egy játékos mód [NEHÉZ]"));
+top10moreDiv.appendChild(createScoreBoard(top10moreData ? top10moreData : [{name: "Nincs adat", point: "Nincs adat"}], "TOP 10 Több játékos mód [KÖNNYŰ]")) ;
+
 function storeData() {
-    const existsNormal = JSON.parse(localStorage.getItem('top10normal'));
-    const existsHard = JSON.parse(localStorage.getItem('top10hard'));
     const actualGame = JSON.parse(localStorage.getItem('actualGameResult'));
-    if (level.value === "normal") {
-        const data = existsNormal===null ? actualGame : top10Score(actualGame, existsNormal);
-        localStorage.setItem("top10normal",JSON.stringify(data));
+
+    if (parseInt(playersNumber.value) === 1) {
+        if (level.value === "normal") {
+            top10normalDivData = top10normalDivData === null ? actualGame : top10Score(actualGame, top10normalDivData);
+            localStorage.setItem("top10normal1", JSON.stringify(top10normalDivData));
+
+
+            top10normalDivData.sort(function (a, b) {
+                return b[1] - a[1];
+            });
+
+            top10normalDiv.innerHTML = "";
+            top10normalDiv.appendChild(createScoreBoard(top10normalDivData ? top10normalDivData : [{name: "Nincs adat", point: "Nincs adat"}], "TOP 10 Egy játékos mód [KÖNNYŰ]"));
+        } else {
+            top10hardDivData = top10hardDivData === null ? actualGame : top10Score(actualGame, top10hardDivData);
+            localStorage.setItem("top10hard1", JSON.stringify(top10hardDivData));
+
+            top10hardDivData.sort(function (a, b) {
+                return b[1] - a[1];
+            });
+
+            top10hardDiv.innerHTML = "";
+            top10hardDiv.appendChild(createScoreBoard(top10hardDivData ? top10hardDivData: [{name: "Nincs adat", point: "Nincs adat"}], "TOP 10 Egy játékos mód [NEHÉZ]"));
+
+        }
     } else {
-        const data = existsHard ? actualGame : top10Score(actualGame, existsHard);
-        localStorage.setItem("top10hard",JSON.stringify(data));
+        top10moreData = top10moreData === null ? actualGame : top10Score(actualGame, top10moreData);
+        localStorage.setItem("top10more", JSON.stringify(top10moreData));
+
+        top10moreData.sort(function (a, b) {
+            return b[1] - a[1];
+        });
+
+        top10moreDiv.innerHTML = "";
+        top10moreDiv.appendChild(createScoreBoard(top10moreData ? top10moreData : [{name: "Nincs adat", point: "Nincs adat"}], "TOP 10 Több játékos mód [KÖNNYŰ]")) ;
     }
 }
 
 function top10Score(actualGame, normalData) {
-    for(let i = 0; i < actualGame.length; ++i){
+    for (let i = 0; i < actualGame.length; ++i) {
         let store = false;
-        for(let j = 0; j < normalData.length; ++j){
-            if(actualGame[i][0]===normalData[j][0]){
+        for (let j = 0; j < normalData.length; ++j) {
+            if (actualGame[i].name === normalData[j].name) {
                 store = true;
-                normalData[j][1] += actualGame[i][1];
+                normalData[j].point += actualGame[i].point;
             }
         }
-        if(!store){
+        if (!store) {
             normalData.push(actualGame[i]);
         }
     }
     return normalData;
 }
-/*
-top10normalDiv ;
-top10hardDiv;*/
 
-//const top10normalData = JSON.parse(localStorage.getItem("top10normal"));
 
 
 function createScoreBoard(data, name) {
@@ -743,4 +772,3 @@ function createScoreBoard(data, name) {
     }
     return table;
 }
-

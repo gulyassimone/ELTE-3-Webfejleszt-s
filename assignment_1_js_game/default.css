@@ -1,38 +1,50 @@
+body {
+    margin: 10px auto;
+    width:100%;
+    background-image: url("./media/background.jpg");
+    background-color: #97F2F3;
+    font-family: 'Amatic SC';font-size: 22px;
+}
+.content {
+    margin: auto;
+    width: 60%;
+    padding: 10px;
+}
+
 .hide {
     display: none;
 }
 
-/* The Modal (background) */
 .modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    padding-top: 100px; /* Location of the box */
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 100px;
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0, 0, 0); /* Fallback color */
-    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
 }
 
-/* Modal Content */
+
 .modal-content {
     background-color: #fefefe;
     margin: auto;
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
-    max-height: calc(100vh - 210px);
+    max-height: calc(100vh - 110px);
     overflow-y: auto;
 }
 
-/* The Close Button */
+
 .close {
     color: #aaaaaa;
     float: right;
-    font-size: 28px;
+    font-size: 60px;
     font-weight: bold;
 }
 
@@ -44,33 +56,149 @@
 }
 
 img {
-    height: 10em;
-}
-
-.selectPlayer {
-    font-weight: bold;
-    font-size: 150%;
-    color: green;
+    height: 50%;
 }
 
 .selectCard {
-    height: 15em;
     border: 5px solid yellow;
 }
 
-.inactivePlayer {
-    background-color: grey;
-    border: none;
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-}
 .set {
-    height: 15em;
-    border: 5px solid blue;
+    border: 2px solid #3a5874;
 }
+.box{
+    margin : auto;
+    width : 150px;
+}
+button{
+    width : 100%;
+    height : 50px;
+    margin-bottom : 15px;
+    border : none;
+    border-radius : 5px;
+    color: #ffffff;
+    transition : background-color ease-in-out 0.5s;
+    transform: rotate(5deg);
+    font-weight: bold;
+}
+.btn-green{
+    background-color : #bdcc72 ;
+}
+.btn-red{
+    background-color : #e27589;
+}
+.btn-blue{
+    background-color : #93b9dc;
+}
+.selectPlayer{
+    background-color : #fdfd96;
+    color : black;
+}
+.inactivePlayer {
+    background-color: #949494;
+    color : black;
+}
+button:hover{
+    background-color : transparent ;
+}
+.btn-green:hover {
+    border : 1px solid  #bdcc72;
+    color : black;
+}
+.btn-red:hover{
+    border : 1px solid  #e27589;
+    color : black;
+}
+.btn-blue:hover{
+    border : 1px solid  #93b9dc;
+    color : #93b9dc;
+}
+.selectPlayer:hover{
+    border : 1px solid  #fdfd96;
+    color : black;
+}
+
+*, *:before, *:after {
+    box-sizing: border-box;
+}
+select, input {
+    padding:10px;
+    margin:10px 0;
+    box-shadow:0 0 15px 4px rgba(0,0,0,0.06);
+    border-radius:10px;
+    border: 2px solid #eee;
+}
+.inline {
+    width: 40%;
+    margin-top: 70px;
+    display: inline-block;
+    position:relative;
+    vertical-align:top;
+}
+#players{
+    width: 15%;
+}
+#scores, #menu{
+    background-color: #82D9EA;
+    box-shadow:0 0 15px 4px rgba(0,0,0,0.06);
+    border-radius:10px;
+    padding:10px;
+    margin: 10px auto;
+
+}
+#score{
+    float: right;
+}
+table {
+    border-collapse: collapse;
+    background:white;
+    border-radius:6px;
+    overflow:hidden;
+    max-width:800px;
+    width:100%;
+    margin:30px auto;
+
+    transform: rotate(3deg)
+}
+
+td,th           { padding-left:8px;}
+
+thead tr        {
+    height:60px;
+    background:#FFED86;
+    font-size:16px;
+}
+caption{
+    font-weight: bold;;
+}
+.right{
+    position: relative;
+    margin: 5px;
+}
+.center1{
+    transform: rotate(-5deg);
+}
+.center2{
+    transform: rotate(-56deg);
+}
+.center3{
+    transform: rotate(10deg);
+}.center4
+ {
+     transform: rotate(12deg);
+ }
+ #timer{
+     transform: rotate(-5deg);
+     margin-top: 60px;
+     margin-right: 60px;
+     border: 1px solid black;
+     position: relative;
+     height: 60px;
+     width: 60px;
+     float: right;
+     background-color: #e27589;
+     font-size: 48px;
+     align-items: center;
+     justify-content: center;
+     display: flex;
+ }
