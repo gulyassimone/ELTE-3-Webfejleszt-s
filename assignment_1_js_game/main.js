@@ -23,6 +23,7 @@ const remainingCardsCountDown = document.querySelector("#remainingCards");
 const top10normalDiv = document.querySelector("#top10normal1");
 const top10hardDiv = document.querySelector("#top10hard1");
 const top10moreDiv = document.querySelector("#top10more");
+const summaryScoreDiv = document.querySelector("#summaryScore");
 
 let top10normalDivData = JSON.parse(localStorage.getItem("top10normal1"));
 let top10hardDivData = JSON.parse(localStorage.getItem("top10hard1"));
@@ -229,7 +230,7 @@ const deck = {
      * add 3 cards to table
      */
     addCardsToTable: function () {
-        if (this.remainingCards.length !== 0) {
+        if (this.remainingCards.length !== 0 && addCardsCheckbox) {
             for (let i = 0; i < 3; i++) {
                 const temp = this.remainingCards.pop();
                 this.cardsOnTable.push(temp);
@@ -353,10 +354,19 @@ const game = {
         for (let i = 0; i < sortedPlayers.length; ++i) {
             data.push({name: sortedPlayers[i].name, point: sortedPlayers[i].point});
         };
+        const lastGameResult = JSON.parse(localStorage.getItem("lastGameResult"));
+
+        const lastData = lastGameResult===null ? data : top10Score(data, lastGameResult);
 
         localStorage.setItem("actualGameResult", JSON.stringify(data));
+        localStorage.setItem("lastGameResult", JSON.stringify(lastData))
+
+        const table2 = createScoreBoard(lastData, 'Összesített pontszám');
+
         scoreOutput.innerHTML = "";
         scoreOutput.appendChild(table);
+        summaryScoreDiv.innerHTML = "";
+        summaryScoreDiv.appendChild(table2);
 
     },
 
@@ -447,7 +457,7 @@ rules.addEventListener("click", function () {
 
 document.addEventListener("click", function (event) {
     if (event.target.matches(".close")) {
-        sstartCountDown();
+        stopCountDown();
         event.target.closest(".modal").style.display = "none";
         game.reset();
     }
@@ -599,7 +609,7 @@ function selectCardHandle(event) {
             result.innerHTML = "";
         }, 5000);
         if (parseInt(playersNumber.value) > 1) {
-            sstartCountDown();
+            stopCountDown();
         }
 
         if (deck.existSetOnTable().length === 0 && deck.remainingCards.length === 0) {
@@ -611,6 +621,15 @@ function selectCardHandle(event) {
             scoreOutput.insertBefore(elem, scoreOutput.firstChild);
             storeData();
             stopTimer();
+            if(parseInt(playersNumber.value)>1){
+                elem.innerHTML = `Akartok újra együtt játszani? <button id = "again" type = button class = "smallbutton" value="yes">Yes</button> <button id = "close" type = button class = "smallbutton" value="no">No</button>`;
+                document.querySelector("#again").addEventListener("click", function (){game.init();});
+                document.querySelector("#close").addEventListener("click", function (){
+                    stopCountDown();
+                    event.target.closest(".modal").style.display = "none";
+                    game.reset();
+                });
+            }
         } else {
             game.writeScore();
         }
@@ -641,7 +660,6 @@ function startCountDown() {
                 game.unselectPlayer();
                 deck.resetSelectedCards();
                 game.writeScore();
-                timerOutput.innerHTML = "Letelt az idő";
 
                 setTimeout(function () {
                     timerOutput.innerHTML = "";
@@ -663,7 +681,7 @@ function startTimer() {
     );
 }
 
-function sstartCountDown() {
+function stopCountDown() {
     clearTimeout(timer);
     setTimeout(function () {
         timerOutput.innerHTML = "";
