@@ -204,11 +204,21 @@ button{
 .end{
     font-weight: bold;
     text-font: 22px;
-    text-color: red;
+    text-align: center;
+    background-color : #93b9dc;
+    margin:auto;
+    padding: 10px;
+    max-width: 300px;
 }
-smallbutton{
+.smallbutton{
     width: 50px;
     height: 20px;
     display: inline-block;
-    background-color  : 1px solid  #e27589;
+    background-color: #e27589;
+}
+.result{
+    padding: 10px;
+    font-size: 22px;
+    margin: auto;
+    height: 30px;
 }
