@@ -216,9 +216,9 @@ button{
     display: inline-block;
     background-color: #e27589;
 }
-.result{
-    padding: 10px;
+#result{
     font-size: 22px;
-    margin: auto;
     height: 30px;
+    width: 100px;
+    text-align: center;
 }

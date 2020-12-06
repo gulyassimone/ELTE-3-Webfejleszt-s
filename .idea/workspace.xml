@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="b630a2b6-4688-4a87-90f1-7cc5d7be9ae0" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="PHP" />
+  <component name="ProjectId" id="1kecvinxqjOYPzphWpcXB7TPt3D" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/10.ora" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\gulya\OneDrive\Dokumentumok\ELTE-3-Webfejleszt-s\practice" />
+      <recent name="C:\Users\gulya\OneDrive\Dokumentumok\ELTE-3-Webfejleszt-s" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\gulya\OneDrive\Dokumentumok\ELTE-3-Webfejleszt-s\10.ora" />
+      <recent name="C:\Users\gulya\OneDrive\Dokumentumok\ELTE-3-Webfejleszt-s\practice" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b630a2b6-4688-4a87-90f1-7cc5d7be9ae0" name="Default Changelist" comment="" />
+      <created>1606064729178</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1606064729178</updated>
+      <workItem from="1606064730198" duration="5467000" />
+      <workItem from="1606070838819" duration="1699000" />
+      <workItem from="1606095538677" duration="11375000" />
+      <workItem from="1606107208338" duration="10640000" />
+      <workItem from="1606121578903" duration="21520000" />
+      <workItem from="1606383414203" duration="1049000" />
+      <workItem from="1606574219025" duration="1864000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="622" y="389" key="#CLI_Interpreters" timestamp="1606065190237">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="622" y="389" key="#CLI_Interpreters/0.0.2560.1400/-1920.6.1920.1040@0.0.2560.1400" timestamp="1606065190237" />
+    <state x="749" y="377" key="#PHP" timestamp="1606065202424">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="749" y="377" key="#PHP/0.0.2560.1400/-1920.6.1920.1040@0.0.2560.1400" timestamp="1606065202424" />
+    <state x="386" y="505" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1606149479942">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="386" y="505" key="#com.intellij.fileTypes.FileTypeChooser/0.0.2560.1400/-1920.6.1920.1040@0.0.2560.1400" timestamp="1606149479942" />
+    <state x="822" y="489" key="FileChooserDialogImpl" timestamp="1606065180528">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="822" y="489" key="FileChooserDialogImpl/0.0.2560.1400/-1920.6.1920.1040@0.0.2560.1400" timestamp="1606065180528" />
+    <state x="359" y="423" key="NewPhpClassDialog" timestamp="1606129753305">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="359" y="423" key="NewPhpClassDialog/0.0.2560.1400/-1920.6.1920.1040@0.0.2560.1400" timestamp="1606129753305" />
+    <state x="876" y="657" key="NewPhpFileDialog" timestamp="1606143076270">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="876" y="657" key="NewPhpFileDialog/0.0.2560.1400/-1920.6.1920.1040@0.0.2560.1400" timestamp="1606143076270" />
+    <state x="354" y="388" width="585" height="624" key="find.popup" timestamp="1606096381948">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="354" y="388" width="585" height="624" key="find.popup/0.0.2560.1400/-1920.6.1920.1040@0.0.2560.1400" timestamp="1606096381948" />
+    <state x="698" y="349" key="run.anything.popup" timestamp="1606064949713">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="698" y="349" key="run.anything.popup/0.0.2560.1400/-1920.6.1920.1040@0.0.2560.1400" timestamp="1606064949713" />
+    <state x="303" y="315" width="672" height="678" key="search.everywhere.popup" timestamp="1606116824820">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="303" y="315" width="672" height="678" key="search.everywhere.popup/0.0.2560.1400/-1920.6.1920.1040@0.0.2560.1400" timestamp="1606116824820" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/10.ora/add.php</url>
+          <line>31</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/practice/index.php</url>
+          <line>42</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/practice/10_ora_2.php</url>
+          <line>4</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
