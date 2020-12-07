@@ -1,5 +1,4 @@
 const gameDiv = document.querySelector("#game");
-const modalContent = document.querySelector("#game .modal-content");
 const playersNumber = document.querySelector("#players_number");
 const gameMode = document.querySelector("#game_mod");
 const specialOptions = document.querySelector("#special_options");
@@ -21,9 +20,17 @@ const playersInput = document.querySelector("#players_input");
 const timerOutput = document.querySelector("#timer");
 const scoreOutput = document.querySelector("#score");
 const remainingCardsCountDown = document.querySelector("#remainingCards");
-const top10normalDiv = document.querySelector("#top10normal");
-const top10hardDiv = document.querySelector("#top10hard");
+const top10normalDiv = document.querySelector("#top10normal1");
+const top10hardDiv = document.querySelector("#top10hard1");
+const top10moreDiv = document.querySelector("#top10more");
+const summaryScoreDiv = document.querySelector("#summaryScore");
+const endDiv = document.querySelector("#end");
+
+let top10normalDivData = JSON.parse(localStorage.getItem("top10normal1"));
+let top10hardDivData = JSON.parse(localStorage.getItem("top10hard1"));
+let top10moreData = JSON.parse(localStorage.getItem("top10more"));
 let timer = 0;
+let gameStatus = null;
 
 const shapes = {
     DIAMOND: {codeNumb: 1, english: "diamond", code: 'D'},
@@ -138,10 +145,7 @@ const deck = {
 
     init: function () {
         this.generateDeck();
-        /**
-         * @todo delete comment
-         */
-        //this.remainingCards.forEach(element => element.writeToConsole());
+        this.remainingCards.forEach(element => element.writeToConsole());
         this.shuffle();
         for (let i = 0; i < 12; i++) {
             const temp = this.remainingCards.pop();
@@ -233,11 +237,10 @@ const deck = {
             if (this.remainingCards.length === 0) {
                 deckContainer.classList.add("hide");
             }
-            if (deck.existSetOnTable().length === 0 && addCardsCheckbox.checked) {
+            if (deck.existSetOnTable().length === 0) {
                 this.addCardsToTable();
             }
         }
-
         remainingCardsCountDown.innerHTML = `${deck.remainingCards.length} kártya maradt a pakliban`;
     },
     /**
@@ -282,12 +285,15 @@ const game = {
      *  When the game starts, this program generates the board based on the general settings
      */
     init: function () {
+        endDiv.innerHTML = "";
+        gameStatus = 1;
         deck.init();
         this.createPlayers();
         this.writePlayers();
-        if (parseInt(playersNumber.value) === 1) {
+        if (parseInt(playersNumber.value) === 1 && gameMode.value === "competitive") {
             startTimer();
         }
+        remainingCardsCountDown.innerHTML = `${deck.remainingCards.length} kártya maradt a pakliban`;
     },
     /**
      * Generates all players according to the data set in the general settings
@@ -316,7 +322,7 @@ const game = {
             const playerLine = document.createElement('tr');
             const playerColumnName = document.createElement('td');
 
-            playerColumnName.innerHTML = `<button type = button>${this.players[i].name}</button>`;
+            playerColumnName.innerHTML = `<button type = button class ="box btn-blue">${this.players[i].name}</button>`;
 
             playerLine.appendChild(playerColumnName);
             table.appendChild(playerLine)
@@ -341,17 +347,27 @@ const game = {
             return b.point - a.point;
         });
 
-        const table = createScoreBoard(sortedPlayers, 'Aktuális pontszám');
+        const table = createScoreBoard(sortedPlayers, 'Aktuális pontszám', "Pont");
 
         const data = [];
 
-        for(let i = 0; i < sortedPlayers.length; ++i){
-            data.push(new Array(sortedPlayers[i].name,sortedPlayers[i].point));
-        };
+        for (let i = 0; i < sortedPlayers.length; ++i) {
+            data.push({name: sortedPlayers[i].name, point: sortedPlayers[i].point});
+        }
+
 
         localStorage.setItem("actualGameResult", JSON.stringify(data));
+
+        summaryScoreDiv.innerHTML = "";
         scoreOutput.innerHTML = "";
         scoreOutput.appendChild(table);
+
+        if (parseInt(playersNumber.value) > 1) {
+            const lastGameResult = JSON.parse(sessionStorage.getItem("lastGameResult"));
+            const lastData = lastGameResult === null ? data : summaryScore(data, lastGameResult);
+            const table2 = createScoreBoard(lastData, 'Összesített pontszám', "Pont");
+            summaryScoreDiv.appendChild(table2);
+        }
 
     },
 
@@ -383,7 +399,7 @@ const game = {
         let existsActivePlayer = false;
 
         for (let i = 0; i < game.players.length && !existsActivePlayer; ++i) {
-            if (game.players[i].selected != -1) {
+            if (game.players[i].selected !== -1) {
                 existsActivePlayer = true;
             }
         }
@@ -412,7 +428,7 @@ const game = {
      * @param cards
      * @returns {boolean}
      */
-    isSet: function(cards) {
+    isSet: function (cards) {
         const isSet = [...cards[0].codeNumb];
         for (let j = 0; j < isSet.length; j++) {
             for (let i = 1; i < 3; i++) {
@@ -442,9 +458,10 @@ rules.addEventListener("click", function () {
 
 document.addEventListener("click", function (event) {
     if (event.target.matches(".close")) {
-        stopTimer();
+        stopCountDown();
         event.target.closest(".modal").style.display = "none";
         game.reset();
+        sessionStorage.clear();
     }
 });
 
@@ -486,6 +503,9 @@ addCardsButton.addEventListener('click', deck.addCardsToTable.bind(deck));
 existSetButton.addEventListener("click", function () {
     const exist = deck.existSetOnTable();
     result.innerHTML = (exist.length !== 0) ? "Van benne SET" : "Nincs benne SET";
+    setTimeout(function () {
+        result.innerHTML = "";
+    }, 5000);
 });
 
 findSetButton.addEventListener("click", function () {
@@ -537,7 +557,7 @@ delegate(playersContainer, "click", 'tr td:nth-child(1) button', function (event
 
     const activePlayer = event.target;
     let player = game.players.find(element => element.name === activePlayer.innerText);
-    if (parseInt(playersNumber.value) > 1 && player.selected === 0 && !game.existSelected.player) {
+    if (parseInt(playersNumber.value) > 1 && player.selected === 0 && !game.existSelected.player && gameStatus) {
         game.setExistSelect(player);
         activePlayer.classList.add("selectPlayer");
         startCountDown();
@@ -551,7 +571,7 @@ function arrayRemove(array, value) {
 }
 
 function selectCardHandle(event) {
-    if (deck.selectedCards.length < 3 && game.existSelected.number) {
+    if (deck.selectedCards.length < 3 && game.existSelected.number && gameStatus) {
 
         let card = deck.cardsOnTable.find(element => element.id === event.target.alt);
         if (!card.selected) {
@@ -566,7 +586,7 @@ function selectCardHandle(event) {
 
     if (deck.selectedCards.length === 3) {
         const isSet = game.isSet(deck.selectedCards);
-        if (parseInt(playersNumber.value) > 1) {
+        if (parseInt(playersNumber.value) > 1 && gameStatus) {
             document.querySelector(".selectPlayer").classList.add("inactivePlayer");
         }
 
@@ -578,7 +598,7 @@ function selectCardHandle(event) {
                 game.unselectPlayer(true);
             }
             game.writePlayers();
-            if (deck.cardsOnTable.length < 12 || (deck.existSetOnTable().length === 0 && addCardsCheckbox.checked)) {
+            if ((deck.cardsOnTable.length < 12 || deck.existSetOnTable().length === 0) && addCardsCheckbox.checked) {
                 deck.addCardsToTable();
             }
         } else {
@@ -589,27 +609,40 @@ function selectCardHandle(event) {
                 game.unselectPlayer(false);
             }
         }
-        result.innerHTML = isSet ? "Set" : "Nem Set";
+        result.innerHTML = isSet ? "Hurrá, egy Set" : "Sajnos ez Nem Set";
         setTimeout(function () {
             result.innerHTML = "";
         }, 5000);
         if (parseInt(playersNumber.value) > 1) {
-            stopTimer();
+            stopCountDown();
         }
 
         if (deck.existSetOnTable().length === 0 && deck.remainingCards.length === 0) {
+            gameStatus = 0;
             game.writeScore();
-            const elem = document.createElement("div");
-            elem.classList.add("vege");
-            elem.innerHTML = "A játéknak vége. Eredmények";
-            scoreOutput.insertBefore(elem, scoreOutput.firstChild);
-
+            endDiv.innerHTML = "A játéknak vége.";
             storeData();
-
+            stopTimer();
+            if (parseInt(playersNumber.value) > 1) {
+                endDiv.innerHTML = `Akartok újra együtt játszani? <div class="box"><button id = "again" type = button class = " smallbutton" value="yes">Yes</button></div> <div class="box"><button id = "closeButton" type = button class = "smallbutton" value="no">No</button></div>`;
+                document.querySelector("#again").addEventListener("click", function () {
+                    const actualGameResult = JSON.parse(localStorage.getItem("actualGameResult"));
+                    const lastGameResult = JSON.parse(sessionStorage.getItem("lastGameResult"));
+                    const lastData = lastGameResult === null ? actualGameResult : summaryScore(actualGameResult, lastGameResult);
+                    sessionStorage.setItem("lastGameResult", JSON.stringify(lastData))
+                    game.reset();
+                    game.init();
+                });
+                document.querySelector("#closeButton").addEventListener("click", function () {
+                    stopCountDown();
+                    gameDiv.style.display = "none";
+                    game.reset();
+                    sessionStorage.clear();
+                });
+            }
         } else {
             game.writeScore();
         }
-        game.writeScore();
     }
 }
 
@@ -621,7 +654,6 @@ function delegate(parent, type, selector, handler) {
         }
     })
 }
-
 
 
 /**
@@ -638,7 +670,6 @@ function startCountDown() {
                 game.unselectPlayer();
                 deck.resetSelectedCards();
                 game.writeScore();
-                timerOutput.innerHTML = "Letelt az idő";
 
                 setTimeout(function () {
                     timerOutput.innerHTML = "";
@@ -660,53 +691,129 @@ function startTimer() {
     );
 }
 
-function stopTimer() {
+function stopCountDown() {
     clearTimeout(timer);
     setTimeout(function () {
         timerOutput.innerHTML = "";
     }, 1000);
 }
 
-/**
- *
- * @param data
- */
+function stopTimer() {
+    clearTimeout(timer);
+}
+
+top10normalDiv.appendChild(createScoreBoard(top10normalDivData ? top10normalDivData : [{
+    name: "Nincs adat",
+    point: "Nincs adat"
+}], "TOP 10 Egy játékos mód [KÖNNYŰ]", "Idő"));
+top10hardDiv.appendChild(createScoreBoard(top10hardDivData ? top10hardDivData : [{
+    name: "Nincs adat",
+    point: "Nincs adat"
+}], "TOP 10 Egy játékos mód [NEHÉZ]", "Idő"));
+top10moreDiv.appendChild(createScoreBoard(top10moreData ? top10moreData : [{
+    name: "Nincs adat",
+    point: "Nincs adat"
+}], "TOP 10 Több játékos mód [KÖNNYŰ]", "Pont"));
+
 function storeData() {
-    const existsNormal = JSON.parse(localStorage.getItem('top10normal'));
-    const existsHard = JSON.parse(localStorage.getItem('top10hard'));
     const actualGame = JSON.parse(localStorage.getItem('actualGameResult'));
-    if (level.value === "normal") {
-        const data = existsNormal===null ? actualGame : top10Score(actualGame, existsNormal);
-        localStorage.setItem("top10normal",JSON.stringify(data));
+
+    if (parseInt(playersNumber.value) === 1 && gameMode.value === "competitive") {
+        if (level.value === "normal") {
+            top10normalDivData = top10normalDivData === null ? new Array({
+                name: actualGame[0].name,
+                timer: parseInt(timerOutput.innerText)
+            }) : top10Score(actualGame, top10normalDivData);
+            localStorage.setItem("top10normal1", JSON.stringify(top10normalDivData));
+
+            top10normalDiv.innerHTML = "";
+            top10normalDiv.appendChild(createScoreBoard(top10normalDivData ? top10normalDivData : [{
+                name: "Nincs adat",
+                point: "Nincs adat"
+            }], "TOP 10 Egy játékos mód [KÖNNYŰ]", "Idő"));
+        } else {
+            top10hardDivData = top10hardDivData === null ? new Array({
+                name: actualGame[0].name,
+                timer: parseInt(timerOutput.innerText)
+            }) : top10Score(actualGame, top10hardDivData);
+            localStorage.setItem("top10hard1", JSON.stringify(top10hardDivData));
+
+            top10hardDiv.innerHTML = "";
+            top10hardDiv.appendChild(createScoreBoard(top10hardDivData ? top10hardDivData : [{
+                name: "Nincs adat",
+                point: "Nincs adat"
+            }], "TOP 10 Egy játékos mód [NEHÉZ]", "Idő"));
+
+        }
     } else {
-        const data = existsHard ? actualGame : top10Score(actualGame, existsHard);
-        localStorage.setItem("top10hard",JSON.stringify(data));
+        top10moreData = top10moreData === null ? actualGame : top10Score(actualGame, top10moreData);
+        localStorage.setItem("top10more", JSON.stringify(top10moreData));
+
+        top10moreDiv.innerHTML = "";
+        top10moreDiv.appendChild(createScoreBoard(top10moreData ? top10moreData : [{
+            name: "Nincs adat",
+            point: "Nincs adat"
+        }], "TOP 10 Több játékos mód [KÖNNYŰ]", "Pont"));
     }
 }
 
 function top10Score(actualGame, normalData) {
-    for(let i = 0; i < actualGame.length; ++i){
+    for (let i = 0; i < actualGame.length; ++i) {
         let store = false;
-        for(let j = 0; j < normalData.length; ++j){
-            if(actualGame[i][0]===normalData[j][0]){
+        for (let j = 0; j < normalData.length; ++j) {
+            if (actualGame[i].name === normalData[j].name) {
                 store = true;
-                normalData[j][1] += actualGame[i][1];
+                if (parseInt(playersNumber.value) > 1) {
+                    normalData[j].point = actualGame[i].point;
+                } else {
+                    normalData[j].timer = parseInt(timerOutput.innerText);
+                }
             }
         }
-        if(!store){
-            normalData.push(actualGame[i]);
+        if (!store) {
+            if (parseInt(playersNumber.value) > 1) {
+                normalData.push(actualGame[i]);
+            } else {
+                const name = actualGame[i].name;
+                normalData.push({name, timer: parseInt(timerOutput.innerText)});
+            }
         }
     }
-    return normalData;
+    normalData.sort(function (a, b) {
+        return b[1] - a[1];
+    });
+    return normalData.slice(0, 10);
 }
-/*
-top10normalDiv ;
-top10hardDiv;*/
+function summaryScore(actualGame, normalData) {
+    for (let i = 0; i < actualGame.length; ++i) {
+        let store = false;
+        for (let j = 0; j < normalData.length; ++j) {
+            if (actualGame[i].name === normalData[j].name) {
+                store = true;
+                if (parseInt(playersNumber.value) > 1) {
+                    normalData[j].point += actualGame[i].point;
+                } else {
+                    normalData[j].timer += parseInt(timerOutput.innerText);
+                }
+            }
+        }
+        if (!store) {
+            if (parseInt(playersNumber.value) > 1) {
+                normalData.push(actualGame[i]);
+            } else {
+                const name = actualGame[i].name;
+                normalData.push({name, timer: parseInt(timerOutput.innerText)});
+            }
+        }
+    }
+    normalData.sort(function (a, b) {
+        return b[1] - a[1];
+    });
+    return normalData.slice(0, 10);
+}
 
-//const top10normalData = JSON.parse(localStorage.getItem("top10normal"));
 
-
-function createScoreBoard(data, name) {
+function createScoreBoard(data, name, secondC) {
     const caption = document.createElement('caption');
     caption.innerHTML = name;
     const table = document.createElement('table');
@@ -717,7 +824,7 @@ function createScoreBoard(data, name) {
 
     playerColumnRankHead.innerHTML = 'Rank';
     playerColumnNameHead.innerHTML = 'Név';
-    playerColumnPointHead.innerHTML = 'Pont';
+    playerColumnPointHead.innerHTML = secondC;
 
     playerHeadRow.appendChild(playerColumnRankHead);
     playerHeadRow.appendChild(playerColumnNameHead);
@@ -734,7 +841,11 @@ function createScoreBoard(data, name) {
 
         playerColumnRank.innerHTML = `${i + 1}`;
         playerColumnName.innerHTML = data[i].name;
-        playerColumnPoint.innerHTML = data[i].point;
+        if (secondC === "Pont") {
+            playerColumnPoint.innerHTML = data[i].point;
+        } else {
+            playerColumnPoint.innerHTML = data[i].timer;
+        }
 
         playerLine.appendChild(playerColumnRank);
         playerLine.appendChild(playerColumnName);
@@ -744,3 +855,6 @@ function createScoreBoard(data, name) {
     return table;
 }
 
+window.addEventListener('load', function () {
+    sessionStorage.clear();
+})

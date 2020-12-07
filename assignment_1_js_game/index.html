@@ -4,35 +4,44 @@
     <link rel="stylesheet" href="default.css">
     <meta charset="UTF-8">
     <title>SET Játék</title>
+    <link href='https://fonts.googleapis.com/css?family=Amatic SC' rel='stylesheet'>
+
 </head>
 <body>
-<div id="menu">
-    <b>SET játék</b><br>
-    <button id="show_rules">Játék szabályzat</button>
+
+<div id="menu" class = "inline">
+    <b><h1>SET játék</h1></b><br>
+    <button id="show_rules" class="box btn-red">Játék szabályzat</button>
+    <button id="play" type="button" class="box btn-green start">Start</button>
     <div id="rules" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
-            <p>A játék célja hogy 3 kártyából álló SET-eket találjunk meg az asztalra lehelyezett 12 kártyából. Minden
-                kártyának 4 tulajdonsága van, amik a következők:
-            <ul>
-                <li>FORMA: ovális, hullámos, rombusz</li>
-                <li>SZÍN: piros, zöld, lila</li>
-                <li>SZÁM: 1, 2 vagy 3 forma</li>
-                <li>TARTALOM: tömör, csíkos, üres (ez csak a plusz feladatokban jelenik meg.)</li>
-            </ul>
-            <p>Egy SET 3 kártyából áll, amiben minden jellemzőt külön megvizsgálva, azoknak
-            <ul>
-                <li>vagy minden kártyán azonosnak,</li>
-                <li> vagy minden kártyán különbözőnek kell lennie.</li>
-            </ul>
-            <p>
-                Ennek a szabálynak MINDEN tulajdonság esetében meg kell felelnie a kiválasztott három lapnak. Más
-                szavakkal: a
-                forma vagy azononos mindhárom kártyán, vagy mindegyiken más; a szín vagy azonos mindhárom kártyán, vagy
-                mindegyiken különböző, stb... Fordítva: ha a lapokon egy tulajdonságot vizsgálva 2 azonos és 1 különböző
-                típus
-                látható, akkor az nem SET. Például, ha 2 lap piros, 1 pedig lila, akkor az nem SET.
-            </p>
+            <div><span class="close">&times;</span></div>
+            <div>
+                <p>A játék célja hogy 3 kártyából álló SET-eket találjunk meg az asztalra lehelyezett 12 kártyából.
+                    Minden
+                    kártyának 4 tulajdonsága van, amik a következők:
+                <ul>
+                    <li>FORMA: ovális, hullámos, rombusz</li>
+                    <li>SZÍN: piros, zöld, lila</li>
+                    <li>SZÁM: 1, 2 vagy 3 forma</li>
+                    <li>TARTALOM: tömör, csíkos, üres (ez csak a plusz feladatokban jelenik meg.)</li>
+                </ul>
+                <p>Egy SET 3 kártyából áll, amiben minden jellemzőt külön megvizsgálva, azoknak
+                <ul>
+                    <li>vagy minden kártyán azonosnak,</li>
+                    <li> vagy minden kártyán különbözőnek kell lennie.</li>
+                </ul>
+                <p>
+                    Ennek a szabálynak MINDEN tulajdonság esetében meg kell felelnie a kiválasztott három lapnak. Más
+                    szavakkal: a
+                    forma vagy azononos mindhárom kártyán, vagy mindegyiken más; a szín vagy azonos mindhárom kártyán,
+                    vagy
+                    mindegyiken különböző, stb... Fordítva: ha a lapokon egy tulajdonságot vizsgálva 2 azonos és 1
+                    különböző
+                    típus
+                    látható, akkor az nem SET. Például, ha 2 lap piros, 1 pedig lila, akkor az nem SET.
+                </p>
+            </div>
         </div>
     </div>
     <div id="general_options">
@@ -49,44 +58,64 @@
         </select>
         </div>
         <div>
-            <label for="level">Nehézségi szint: </label><select name="level" id="level" value = "hard">
+            <label for="level">Nehézségi szint: </label><select name="level" id="level" value="hard">
             <option value="hard">haladó</option>
             <option value="normal">kezdő</option>
         </select>
         </div>
-        <div id="special_options">
-            <b>Egyéb beállítások</b><br>
-            Van benne SET? gomb
-            <label for="exist_set_checkbox"></label><input type="checkbox" id="exist_set_checkbox"
-                                                           name="exist_set_checkbox" value="Van benne SET? gomb"><br>
-            SET mutatása gomb
-            <label for="find_set_checkbox"></label><input type="checkbox" id="find_set_checkbox"
-                                                          name="find_set_checkout" value="SET mutatása gomb"><br>
-            Plusz 3 lap automatikus kiosztás
-            <label for="add_cards_checkbox"></label><input type="checkbox" id="add_cards_checkbox"
-                                                           name="add_cards_checkbox"
-                                                           value="Plusz 3 lap automatikus kiosztása"
-                                                           checked><br>
-        </div>
     </div>
-    <button id="play" type="button">Start</button>
-    <div id="top10normal"></div>
-    <div id="top10hard"></div>
+</div>
+<div class = "inline">
+    <div id="special_options">
+        <h2>Egyéb beállítások</h2><br>
+        Van benne SET? gomb
+        <label for="exist_set_checkbox"></label><input type="checkbox" id="exist_set_checkbox"
+                                                       name="exist_set_checkbox"
+                                                       value="Van benne SET? gomb"><br>
+        SET mutatása gomb
+        <label for="find_set_checkbox"></label><input type="checkbox" id="find_set_checkbox"
+                                                      name="find_set_checkout" value="SET mutatása gomb"><br>
+        Plusz 3 lap automatikus kiosztás
+        <label for="add_cards_checkbox"></label><input type="checkbox" id="add_cards_checkbox"
+                                                       name="add_cards_checkbox"
+                                                       value="Plusz 3 lap automatikus kiosztása"
+                                                       checked><br>
+    </div>
+    <div id="scores">
+        <div id="top10normal1"></div>
+        <div id="top10hard1"></div>
+        <div id="top10more"></div>
+    </div>
 </div>
 <div id="game" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
-        <button id="exist_set_button" type="button" class="hide">Van benne SET?</button>
-        <button id="find_set_button" type="button" class="hide">SET mutatása</button>
-        <button id="add_cards_button" type="button" class="hide">Plusz 3 lap automatikus kiosztása</button>
-        <div id="result"></div>
-        <div id="timer"></div>
-        <div id="exist_set_answer"></div>
-        <dix id="players"></dix>
-        <dix id="score"></dix>
-        <div id="table-container"></div>
-        <div id="deck"><img src=./icons/back.svg alt="deck"/></div>
-        <div id="remainingCards"></div>
+        <div>
+            <div>
+                <button id="exist_set_button" type="button" class="hide box  btn-red ">Van benne SET?</button>
+                <button id="find_set_button" type="button" class="hide  box btn-red ">SET mutatása</button>
+                <button id="add_cards_button" type="button" class="hide box btn-red ">Plusz 3 lap
+                </button>
+                <div id="result" ></div>
+                <div id="end" class="end"></div>
+            </div>
+            <div id="timer"></div>
+            <div id="exist_set_answer"></div>
+            <div class="wrapper">
+                <div id="players"></div>
+                <div id="table-container"></div>
+                <div >
+                    <div>
+                        <img id="deck" src=./icons/back.svg alt="deck"/>
+                        <div id="remainingCards"></div>
+                    </div>
+                    <div>
+                        <div id="score"></div>
+                        <div id="summaryScore"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <script src="main.js"></script>
