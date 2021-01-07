@@ -69,7 +69,7 @@
       <workItem from="1606383414203" duration="1049000" />
       <workItem from="1606574219025" duration="1864000" />
       <workItem from="1609144331312" duration="645000" />
-      <workItem from="1610007045437" duration="31779000" />
+      <workItem from="1610007045437" duration="32318000" />
     </task>
     <servers />
   </component>
@@ -143,6 +143,12 @@
           <line>27</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/practice_zh_pot_js/3_task.js</url>
+          <line>164</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="8" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
