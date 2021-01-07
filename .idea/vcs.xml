@@ -3,5 +3,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/assignment" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/php_NemKovid_page" vcs="Git" />
   </component>
 </project>
