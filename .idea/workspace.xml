@@ -43,12 +43,13 @@
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\gulya\OneDrive\Dokumentumok\ELTE-3-Webfejleszt-s\practice" />
-      <recent name="C:\Users\gulya\OneDrive\Dokumentumok\ELTE-3-Webfejleszt-s" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\gulya\OneDrive\Dokumentumok\ELTE-3-Webfejleszt-s\10.ora" />
+      <recent name="C:\Users\gulya\OneDrive\Dokumentumok\ELTE-3-Webfejleszt-s\practice" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\gulya\OneDrive\Dokumentumok\ELTE-3-Webfejleszt-s\practice_zh_pot_js" />
+      <recent name="C:\Users\gulya\OneDrive\Dokumentumok\ELTE-3-Webfejleszt-s" />
       <recent name="C:\Users\gulya\OneDrive\Dokumentumok\ELTE-3-Webfejleszt-s\practice" />
     </key>
   </component>
@@ -68,7 +69,7 @@
       <workItem from="1606383414203" duration="1049000" />
       <workItem from="1606574219025" duration="1864000" />
       <workItem from="1609144331312" duration="645000" />
-      <workItem from="1610007045437" duration="18894000" />
+      <workItem from="1610007045437" duration="31779000" />
     </task>
     <servers />
   </component>
@@ -136,6 +137,12 @@
           <line>10</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/practice_zh_pot_js/2_task.js</url>
+          <line>27</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
