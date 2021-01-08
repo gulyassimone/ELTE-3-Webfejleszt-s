@@ -69,7 +69,9 @@
       <workItem from="1606383414203" duration="1049000" />
       <workItem from="1606574219025" duration="1864000" />
       <workItem from="1609144331312" duration="645000" />
-      <workItem from="1610007045437" duration="32318000" />
+      <workItem from="1610007045437" duration="42183000" />
+      <workItem from="1610059055601" duration="757000" />
+      <workItem from="1610091351929" duration="9204000" />
     </task>
     <servers />
   </component>
@@ -109,10 +111,10 @@
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="698" y="349" key="run.anything.popup/0.0.2560.1400/-1920.6.1920.1040@0.0.2560.1400" timestamp="1606064949713" />
-    <state x="303" y="315" width="672" height="678" key="search.everywhere.popup" timestamp="1606116824820">
+    <state x="303" y="315" width="672" height="678" key="search.everywhere.popup" timestamp="1610092268428">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="303" y="315" width="672" height="678" key="search.everywhere.popup/0.0.2560.1400/-1920.6.1920.1040@0.0.2560.1400" timestamp="1606116824820" />
+    <state x="303" y="315" width="672" height="678" key="search.everywhere.popup/0.0.2560.1400/-1920.6.1920.1040@0.0.2560.1400" timestamp="1610092268428" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -135,20 +137,17 @@
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/practice_zh_js/2_task.js</url>
           <line>10</line>
-          <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="6" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/practice_zh_pot_js/2_task.js</url>
           <line>27</line>
-          <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="7" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/practice_zh_pot_js/3_task.js</url>
-          <line>164</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="8" />
+          <url>file://$PROJECT_DIR$/practice_zh_2020.js/2_task_bird-watch/index.js</url>
+          <line>24</line>
+          <option name="timeStamp" value="9" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
