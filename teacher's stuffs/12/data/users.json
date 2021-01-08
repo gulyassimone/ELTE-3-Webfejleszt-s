@@ -1,0 +1,20 @@
+{
+    "5fc4be22dd25c": {
+        "username": "q",
+        "password": "$2y$10$IYK7DYHXkf2KeT\/2c9NVXe\/esDxKrKDUOLR3AF1W6PoppcKujxIQK",
+        "fullname": "Q Q",
+        "roles": [
+            "user"
+        ],
+        "id": "5fc4be22dd25c"
+    },
+    "5fc4c0ea4b39f": {
+        "username": "w",
+        "password": "$2y$10$mRr7yUIigMcB5ZhVvOl1yO5.xXw7yNm6P48h7Qv87Ae\/kBKWWxoJ6",
+        "fullname": "W W",
+        "roles": [
+            "user"
+        ],
+        "id": "5fc4c0ea4b39f"
+    }
+}
