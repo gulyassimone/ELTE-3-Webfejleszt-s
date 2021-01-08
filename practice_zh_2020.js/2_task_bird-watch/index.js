@@ -44,17 +44,8 @@ delegate(tableContainer, "click", "td", function (event){
   task2.innerHTML = ( count!=null)? count.length : 0;
 
 
-  let bool = true;
-  let result=null;
-  for (let i = 0; i<matrix.length && bool; ++i){
-    if(matrix[i].find(element => element === 0)!=null){
-      bool=false;
-      result=matrix[i].indexOf(0)+1;
-    }
-    console.log(result);
-  }
-  
-  task3.innerHTML=result!=null?result:-1;
+  const index = matrix.find(row => row.includes(0))?.indexOf(0);
+  task3.innerHTML= index!=null ? index+1:"No";
 
 })
 
@@ -63,7 +54,7 @@ function generateMatrix(n, m) {
   for(let i = 0; i<n; i++) {
     const row = []
     for(let j = 0; j<m; j++) {
-      row.push(0)
+      row.push(1)
     }
     matrix.push(row)
   }
