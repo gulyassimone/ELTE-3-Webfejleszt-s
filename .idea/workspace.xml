@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b630a2b6-4688-4a87-90f1-7cc5d7be9ae0" name="Default Changelist" comment="" />
+    <list default="true" id="b630a2b6-4688-4a87-90f1-7cc5d7be9ae0" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignments/assignment_2_php_NemKovid_page/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/assignments/assignment_2_php_NemKovid_page/.idea/php.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignments/assignment_2_php_NemKovid_page/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/assignments/assignment_2_php_NemKovid_page/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/practice_zh_2020.js/2_task_bird-watch/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/practice_zh_2020.js/2_task_bird-watch/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/practice_zh_2020.js/3_task_canvas-audio/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/practice_zh_2020.js/3_task_canvas-audio/index.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -32,7 +38,7 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/10.ora" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../Asztali gép/php_NemKovid_page" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -72,7 +78,11 @@
       <workItem from="1610007045437" duration="42183000" />
       <workItem from="1610059055601" duration="757000" />
       <workItem from="1610091351929" duration="9828000" />
-      <workItem from="1610110738920" duration="901000" />
+      <workItem from="1610110738920" duration="13344000" />
+      <workItem from="1610126727054" duration="234000" />
+      <workItem from="1610277012319" duration="57000" />
+      <workItem from="1610295997840" duration="42000" />
+      <workItem from="1610309771994" duration="214000" />
     </task>
     <servers />
   </component>
@@ -92,10 +102,10 @@
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="386" y="505" key="#com.intellij.fileTypes.FileTypeChooser/0.0.2560.1400/-1920.6.1920.1040@0.0.2560.1400" timestamp="1606149479942" />
-    <state x="822" y="489" key="FileChooserDialogImpl" timestamp="1606065180528">
+    <state x="822" y="489" key="FileChooserDialogImpl" timestamp="1610309984861">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="822" y="489" key="FileChooserDialogImpl/0.0.2560.1400/-1920.6.1920.1040@0.0.2560.1400" timestamp="1606065180528" />
+    <state x="822" y="489" key="FileChooserDialogImpl/0.0.2560.1400/-1920.6.1920.1040@0.0.2560.1400" timestamp="1610309984861" />
     <state x="359" y="423" key="NewPhpClassDialog" timestamp="1606129753305">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>

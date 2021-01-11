@@ -34,7 +34,6 @@ function render(){
 
     ctx.clearRect(0, 0, c.width, c.height);
     ctx.beginPath();
-    ctx.fillStyle = 'rgb(155, 155, 155)';
     ctx.lineWidth = 3;
 
     ctx.moveTo(0,c.height/2);
@@ -42,6 +41,8 @@ function render(){
         ctx.lineTo((i*10)+10,array[i]+c.height/2);
     }
     ctx.lineTo(c.width,c.height/2);
+
+
     ctx.stroke();
 }
 
